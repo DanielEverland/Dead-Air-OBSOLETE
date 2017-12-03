@@ -15,7 +15,7 @@ public class MapDataManager : MonoBehaviour {
     private Vector2 playerPosition;
     private Vector2? currentChunkPosition;
     
-    private const int CHUNK_MAX_DISTANCE = 7;
+    private const int CHUNK_MAX_DISTANCE = 10;
     private const int PROCESSES_PER_FRAME = 3;
     
 	private void Update()
