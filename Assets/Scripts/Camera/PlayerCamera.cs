@@ -26,6 +26,8 @@ public class PlayerCamera : MonoBehaviour {
     private void Awake()
     {
         camera = GetComponent<Camera>();
+
+        camera.orthographicSize = ORTHOGRAPHIC_MIN + ((float)(ORTHOGRAPHIC_MAX - ORTHOGRAPHIC_MIN) / 2);
     }
 	private void Update()
     {
