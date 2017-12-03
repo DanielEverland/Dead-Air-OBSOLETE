@@ -13,6 +13,17 @@ public class ChunkGenerator {
     private static List<Vector3> vertices = new List<Vector3>();
     private static List<List<int>> triangles = new List<List<int>>();
     private static List<Material> materials = new List<Material>();
+    private static Vector3[] Normals
+    {
+        get
+        {
+            if (normals == null)
+                CreateNormals();
+
+            return normals;
+        }
+    }
+    private static Vector3[] normals;
 
 	public static void RenderChunk(Chunk chunk)
     {
@@ -39,7 +50,7 @@ public class ChunkGenerator {
             currentMesh.SetTriangles(triangles[i], i);
         }
 
-        currentMesh.RecalculateNormals();
+        currentMesh.normals = normals;
 
         currentMeshFilter.mesh = currentMesh;
         currentMeshFilter.GetComponent<MeshRenderer>().materials = materials.ToArray();
@@ -72,5 +83,14 @@ public class ChunkGenerator {
         });
 
         verticeCount += 4;
+    }
+    private static void CreateNormals()
+    {
+        normals = new Vector3[(Chunk.CHUNK_SIZE * Chunk.CHUNK_SIZE) * 4];
+
+        for (int i = 0; i < normals.Length; i++)
+        {
+            normals[i] = Vector3.forward;
+        }
     }
 }
