@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TileType : ScriptableObject {
-
+    
     public static List<TileType> AllTypes
     {
         get
@@ -20,8 +20,14 @@ public class TileType : ScriptableObject {
     private static void LoadAllTileTypes()
     {
         allTileTypes = new List<TileType>(Resources.LoadAll<TileType>("Tile Types"));
+
+        for (byte i = 0; i < allTileTypes.Count; i++)
+        {
+            allTileTypes[i].ID = i;
+        }
     }
     
+    public byte ID { get; private set; }
     public Sprite Sprite { get { return _appearance; } }
     public Texture2D Texture
     {
