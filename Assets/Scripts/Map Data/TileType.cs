@@ -39,12 +39,33 @@ public class TileType : ScriptableObject {
             return texture;
         }        
     }
+    public Material Material
+    {
+        get
+        {
+            if (material == null)
+                CreateMaterial();
+
+            return material;
+        }
+    }
 
     private Texture2D texture;
+    private Material material;
 
     [SerializeField]
     private Sprite _appearance;
 
+    private void Load()
+    {
+        CreateTexture();
+        CreateMaterial();
+    }
+    private void CreateMaterial()
+    {
+        material = new Material(Shader.Find("Standard"));
+        material.mainTexture = Texture;
+    }
     private void CreateTexture()
     {
         Rect spriteRect = Sprite.textureRect;
