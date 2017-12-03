@@ -17,7 +17,7 @@ public class TileType : ScriptableObject {
     }
     private static List<TileType> allTileTypes;
 
-    private static void LoadAllTileTypes()
+    public static void LoadAllTileTypes()
     {
         allTileTypes = new List<TileType>(Resources.LoadAll<TileType>("Tile Types"));
 

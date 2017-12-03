@@ -5,11 +5,10 @@ using UnityEngine;
 public class ChunkObjectPool : MonoBehaviour {
 
     [SerializeField]
-    private int objectsToPool = 200;
+    private int objectsToPool = 100;
 
     private new static Transform transform;
-    private static Queue<SpriteRenderer> spriteRenderers = new Queue<SpriteRenderer>();
-    private static Queue<MeshFilter> meshFilters = new Queue<MeshFilter>();
+    private static Queue<MeshFilter> objects = new Queue<MeshFilter>();
     private static HashSet<int> temporaryObjects = new HashSet<int>();
 
     private void Awake()
@@ -18,54 +17,31 @@ public class ChunkObjectPool : MonoBehaviour {
 
         for (int i = 0; i < objectsToPool; i++)
         {
-            CreateSpriteObject(i + 1);
-            CreateMeshObject(i + 1);
+            ReturnObject(CreateMeshObject());
         }
     }
-    private static SpriteRenderer CreateSpriteObject(int number = -1)
+    private static MeshFilter CreateMeshObject()
     {
-        string objectName = number != -1 ? "Chunk Object #" + number : "Temporary Object";
-
-        GameObject obj = new GameObject(objectName);
-        SpriteRenderer renderer = obj.AddComponent<SpriteRenderer>();
-
-        ReturnSpriteRenderer(renderer);
-
-        if (number == -1)
-        {
-            temporaryObjects.Add(obj.GetInstanceID());
-        }
-
-        return renderer;
-    }
-    private static MeshFilter CreateMeshObject(int number = -1)
-    {
-        string objectName = number != -1 ? "Chunk Object #" + number : "Temporary Object";
-        
-        GameObject obj = new GameObject(objectName);
-        MeshRenderer renderer = obj.AddComponent<MeshRenderer>();
+        GameObject obj = new GameObject("Chunk Object");
+        obj.AddComponent<MeshRenderer>();
         MeshFilter filter = obj.AddComponent<MeshFilter>();
-
-        ReturnMeshFilter(filter);
-
-        if (number == -1)
-        {
-            temporaryObjects.Add(obj.GetInstanceID());
-        }
-
+        
         return filter;
     }
     public static MeshFilter GetMeshFilter()
     {
         MeshFilter filter;
 
-        if(meshFilters.Count > 0)
+        if(objects.Count > 0)
         {
-            filter = meshFilters.Dequeue();
+            filter = objects.Dequeue();
         }
         else
         {
             filter = CreateMeshObject();
+            temporaryObjects.Add(filter.gameObject.GetInstanceID());
+
+            filter.gameObject.name = "Temp";
         }
 
         filter.transform.SetParent(null);
@@ -73,20 +49,20 @@ public class ChunkObjectPool : MonoBehaviour {
 
         return filter;
     }
-    public static void ReturnMeshFilter(GameObject obj)
+    public static void ReturnObject(GameObject obj)
     {
         MeshFilter filter = obj.GetComponent<MeshFilter>();
 
         if (filter != null)
         {
-            ReturnMeshFilter(filter);
+            ReturnObject(filter);
         }
         else
         {
             Debug.LogError("Can't return an object without a mesh filter");
         }
     }
-    public static void ReturnMeshFilter(MeshFilter filter)
+    public static void ReturnObject(MeshFilter filter)
     {
         if (temporaryObjects.Contains(filter.gameObject.GetInstanceID()))
         {
@@ -97,50 +73,6 @@ public class ChunkObjectPool : MonoBehaviour {
         filter.transform.SetParent(transform);
         filter.gameObject.SetActive(false);
 
-        meshFilters.Enqueue(filter);
-    }
-    public static SpriteRenderer GetSpriteRenderer()
-    {
-        SpriteRenderer renderer;
-
-        if(spriteRenderers.Count > 0)
-        {
-            renderer = spriteRenderers.Dequeue();
-        }
-        else
-        {
-            renderer = CreateSpriteObject();
-        }
-
-        renderer.transform.SetParent(null);
-        renderer.gameObject.SetActive(true);
-
-        return renderer;
-    }
-    public static void ReturnSpriteRenderer(GameObject obj)
-    {
-        SpriteRenderer renderer = obj.GetComponent<SpriteRenderer>();
-
-        if(renderer != null)
-        {
-            ReturnSpriteRenderer(renderer);
-        }
-        else
-        {
-            Debug.LogError("Can't return an object without a sprite renderer");
-        }
-    }
-    public static void ReturnSpriteRenderer(SpriteRenderer renderer)
-    {
-        if (temporaryObjects.Contains(renderer.gameObject.GetInstanceID()))
-        {
-            Destroy(renderer.gameObject);
-            return;
-        }
-
-        renderer.transform.SetParent(transform);
-        renderer.gameObject.SetActive(false);
-
-        spriteRenderers.Enqueue(renderer);
+        objects.Enqueue(filter);
     }
 }

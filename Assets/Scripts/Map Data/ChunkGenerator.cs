@@ -25,6 +25,10 @@ public class ChunkGenerator {
     }
     private static Vector3[] normals;
 
+    public static void Initialize()
+    {
+        CreateNormals();
+    }
 	public static void RenderChunk(Chunk chunk)
     {
         currentMeshFilter = ChunkObjectPool.GetMeshFilter();
@@ -33,6 +37,8 @@ public class ChunkGenerator {
         materials.Clear();
         vertices.Clear();
         triangles.Clear();
+
+        chunk.AssignGameObject(currentMeshFilter.gameObject);
 
         for (int x = 0; x < Chunk.CHUNK_SIZE; x++)
         {
@@ -54,6 +60,7 @@ public class ChunkGenerator {
 
         currentMeshFilter.mesh = currentMesh;
         currentMeshFilter.GetComponent<MeshRenderer>().materials = materials.ToArray();
+        currentMeshFilter.gameObject.transform.position = new Vector3(Chunk.CHUNK_SIZE * chunk.Position.x, Chunk.CHUNK_SIZE * chunk.Position.y);
     }
     private static void AddTile(int x, int y, byte tileType)
     {

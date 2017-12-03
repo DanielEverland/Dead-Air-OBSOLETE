@@ -6,6 +6,10 @@ using UnityEngine;
 
 public static class Utility {
     
+    public static Vector2 WorldPositionToChunkPosition(Vector3 position)
+    {
+        return new Vector2(Mathf.FloorToInt(position.x / Chunk.CHUNK_SIZE), Mathf.FloorToInt(position.y / Chunk.CHUNK_SIZE));
+    }
     public static T CreateAssetAndRename<T>() where T : ScriptableObject
     {
         return CreateAssetAndRename<T>("New " + typeof(T).ToString() + ".asset");
