@@ -11,6 +11,7 @@ public class PlayerCamera : MonoBehaviour {
     private Vector3 keyboardMovementDirection;
     private float scrollWheelDelta;
     private bool isShiftDown;
+    private Vector3 scrollWheelDownWorldPos;
 
     private const float CAMERA_DRAG_SPEED = 1;
     private const float ZOOM_SPEED = 200;
@@ -37,8 +38,17 @@ public class PlayerCamera : MonoBehaviour {
         oldMousePosition = Input.mousePosition;
 
         isScrollWheelDown = Input.GetKey(KeyCode.Mouse2);
-        scrollWheelDelta = Input.GetAxis("Mouse ScrollWheel");
         isShiftDown = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+        scrollWheelDelta = Input.GetAxis("Mouse ScrollWheel");
+
+        if (Input.GetKeyDown(KeyCode.Mouse2))
+        {
+            scrollWheelDownWorldPos = MouseToWorldPoint();
+        }
+        else if (Input.GetKey(KeyCode.Mouse2))
+        {
+            mouseDelta = scrollWheelDownWorldPos - MouseToWorldPoint();
+        }
 
 
         keyboardMovementDirection = Vector3.zero;
@@ -60,11 +70,18 @@ public class PlayerCamera : MonoBehaviour {
             keyboardMovementDirection += Vector3.down;
         }
     }
+    private Vector3 MouseToWorldPoint()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        float distance = -(Camera.main.transform.position.z - Player.Instance.transform.position.z);
+
+        return ray.origin + ray.direction * distance;
+    }
     private void ProcessInput()
     {
         if (isScrollWheelDown)
         {
-            transform.position += mouseDelta * (CAMERA_DRAG_SPEED * Time.deltaTime);
+            transform.position += mouseDelta;
         }
         else
         {
