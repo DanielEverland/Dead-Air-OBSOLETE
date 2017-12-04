@@ -7,106 +7,75 @@ using UnityEngine;
 
 public class MapDataManager : MonoBehaviour {
 
-    public IEnumerable<Vector3> ChunkPositions { get { return chunks.Keys; } }
-    public IEnumerable<Chunk> ChunkObjects { get { return chunks.Values; } }
+    public static IEnumerable<Vector3> ChunkPositions { get { return chunks.Keys; } }
+    public static IEnumerable<Chunk> ChunkObjects { get { return chunks.Values; } }
+    public static Vector2 PlayerPosition { get; set; }
 
-    private List<Vector3> positionsToCheck = new List<Vector3>();
-    private Dictionary<Vector3, Chunk> chunks = new Dictionary<Vector3, Chunk>();
-    private Vector2 playerPosition;
-    private Vector2? currentChunkPosition;
-    
+    private static Dictionary<Vector3, Chunk> chunks = new Dictionary<Vector3, Chunk>();
+
+    private static MapQuerySlave CreateChunkSlave = new MapQuerySlave();
+    private static MapQuerySlave DestroyChunkSlave = new MapQuerySlave();
+
     private const int CHUNK_MAX_DISTANCE = 10;
-    private const int PROCESSES_PER_FRAME = 3;
-    
-	private void Update()
+
+    private void Awake()
     {
-        PollInput();
-
-        for (int i = 0; i < PROCESSES_PER_FRAME; i++)
-        {
-            ProcessInput();
-        }        
-    }
-    private void PollInput()
-    {
-        playerPosition = Utility.WorldPositionToChunkPosition(Player.Instance.transform.position);
-    }
-    private void ProcessInput()
-    {
-        if (!chunks.ContainsKey(playerPosition))
-        {
-            currentChunkPosition = playerPosition;
-        }
-
-        if(!currentChunkPosition.HasValue)
-        {
-            FindNewChunkPos();
-        }
-        else if (!chunks.ContainsKey(currentChunkPosition.Value) && IsWithinRange(currentChunkPosition.Value))
-        {
-            CreateChunk(currentChunkPosition.Value);
-        }
-        else if (!IsWithinRange(currentChunkPosition.Value))
-        {
-            DestroyChunk(currentChunkPosition.Value);
-        }
-        else
-        {
-            WorkOnNeighbors(currentChunkPosition.Value, pos =>
-            {
-                if (IsWithinRange(pos) && !chunks.ContainsKey(pos))
-                {
-                    CreateChunk(pos);
-
-                    positionsToCheck.Add(pos);
-                }
-                else if (positionsToCheck.Contains(pos))
-                {
-                    currentChunkPosition = pos;
-
-                    positionsToCheck.Remove(pos);
-
-                    return;
-                }
-            });
-
-            currentChunkPosition = null;
-        }
-    }
-    private void WorkOnNeighbors(Vector3 anchor, Action<Vector2> callback)
-    {
-        for (int x = -1; x <= 1; x++)
-        {
-            for (int y = -1; y <= 1; y++)
-            {
-                if (x != 0 && y != 0)
-                    continue;
-
-                callback(new Vector2(x + anchor.x, y + anchor.y));
-            }
-        }
-    }
-    private bool IsWithinRange(Vector2 position)
-    {
-        return Vector2.Distance(playerPosition, position) <= CHUNK_MAX_DISTANCE;
-    }
-    private void FindNewChunkPos()
-    {
-        if(positionsToCheck.Count > 0)
-        {
-            currentChunkPosition = positionsToCheck.OrderBy(x => Vector2.Distance(x, playerPosition)).ElementAt(0);
-
-            positionsToCheck.Remove(currentChunkPosition.Value);
-        }
-        else
+        CreateChunkSlave.OnNoPositionsAvailable += () =>
         {
             if (chunks.Count <= 0)
             {
-                CreateChunk(playerPosition);
+                CreateChunk(PlayerPosition);
+            }
+        };
+
+        CreateChunkSlave.CustomNeighborProcess += (Vector2 pos) =>
+        {
+            if (IsWithinRange(pos) && !ContainsKey(pos))
+            {
+                CreateChunk(pos);
+
+                CreateChunkSlave.PositionsToCheck.Add(pos);
+
+                return true;
             }
 
-            positionsToCheck = new List<Vector3>(ChunkPositions);
-        }        
+            return false;
+        };
+
+        CreateChunkSlave.CustomProcess += () =>
+        {
+            if (!ContainsKey(CreateChunkSlave.CurrentChunkPosition.Value) && IsWithinRange(CreateChunkSlave.CurrentChunkPosition.Value))
+            {
+                CreateChunk(CreateChunkSlave.CurrentChunkPosition.Value);
+            }
+
+            return false;
+        };
+
+        DestroyChunkSlave.CustomProcess += () =>
+        {
+            if (!IsWithinRange(DestroyChunkSlave.CurrentChunkPosition.Value))
+            {
+                DestroyChunk(DestroyChunkSlave.CurrentChunkPosition.Value);
+            }
+
+            return false;
+        };
+    }
+    private void Update()
+    {
+        PlayerPosition = Utility.WorldPositionToChunkPosition(Player.Instance.transform.position);
+
+        CreateChunkSlave.Update();
+        DestroyChunkSlave.Update();
+    }
+    public static bool ContainsKey(Vector3 key)
+    {
+        return chunks.ContainsKey(key);
+    }
+    private bool IsWithinRange(Vector2 position)
+    {
+        return Vector2.Distance(PlayerPosition, position) <= CHUNK_MAX_DISTANCE;
     }
     private void CreateChunk(Vector3 chunkPosition)
     {
@@ -122,9 +91,10 @@ public class MapDataManager : MonoBehaviour {
 
         Destroy(chunk.GameObject);
 
-        if(currentChunkPosition == chunkPosition)
+        if(DestroyChunkSlave.CurrentChunkPosition == chunkPosition)
         {
-            currentChunkPosition = null;
+            DestroyChunkSlave.CurrentChunkPosition = null;
         }
     }
+
 }
