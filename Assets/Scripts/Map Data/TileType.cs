@@ -63,7 +63,7 @@ public class TileType : ScriptableObject {
     }
     private void CreateMaterial()
     {
-        material = new Material(Shader.Find("Standard"));
+        material = new Material(GlobalObjects.GetObject<Material>("ChunkMaterial"));
         material.mainTexture = Texture;
     }
     private void CreateTexture()
