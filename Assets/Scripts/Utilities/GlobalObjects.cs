@@ -44,6 +44,10 @@ public class GlobalObjects : ScriptableObject {
     {
         references[index] = reference;
     }
+    public static T GetObject<T>(string key) where T : Object
+    {
+        return (T)QuickLookup[key];
+    }
     public static Object GetObject(string key)
     {
         return QuickLookup[key];
