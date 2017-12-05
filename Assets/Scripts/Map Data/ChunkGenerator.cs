@@ -97,7 +97,7 @@ public class ChunkGenerator {
 
         for (int i = 0; i < normals.Length; i++)
         {
-            normals[i] = Vector3.forward;
+            normals[i] = Vector3.back;
         }
     }
 }
