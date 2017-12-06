@@ -7,94 +7,27 @@ using UnityEngine;
 
 public class MapDataManager : MonoBehaviour {
 
-    public static IEnumerable<Vector3> ChunkPositions { get { return chunks.Keys; } }
-    public static IEnumerable<Chunk> ChunkObjects { get { return chunks.Values; } }
-    public static Vector2 PlayerPosition { get; set; }
+    public static bool HasLoadedMap { get { return CurrentlyLoadedMap != null; } }
+    public static MapData CurrentlyLoadedMap { get { return currentlyLoadedMap; } }
 
-    private static Dictionary<Vector3, Chunk> chunks = new Dictionary<Vector3, Chunk>();
-
-    private static MapQuerySlave CreateChunkSlave = new MapQuerySlave();
-    private static MapQuerySlave DestroyChunkSlave = new MapQuerySlave();
-
-    private const int CHUNK_MAX_DISTANCE = 10;
-
-    private void Awake()
+    private static MapData currentlyLoadedMap;
+       
+    public static void Initialize()
     {
-        CreateChunkSlave.OnNoPositionsAvailable += () =>
-        {
-            if (chunks.Count <= 0)
-            {
-                CreateChunk(PlayerPosition);
-            }
-        };
+        if (HasLoadedMap)
+            return;
 
-        CreateChunkSlave.CustomNeighborProcess += (Vector2 pos) =>
-        {
-            if (IsWithinRange(pos) && !ContainsKey(pos))
-            {
-                CreateChunk(pos);
+        currentlyLoadedMap = new MapData();
 
-                CreateChunkSlave.PositionsToCheck.Add(pos);
-
-                return true;
-            }
-
-            return false;
-        };
-
-        CreateChunkSlave.CustomProcess += () =>
-        {
-            if (!ContainsKey(CreateChunkSlave.CurrentChunkPosition.Value) && IsWithinRange(CreateChunkSlave.CurrentChunkPosition.Value))
-            {
-                CreateChunk(CreateChunkSlave.CurrentChunkPosition.Value);
-            }
-
-            return false;
-        };
-
-        DestroyChunkSlave.CustomProcess += () =>
-        {
-            if (!IsWithinRange(DestroyChunkSlave.CurrentChunkPosition.Value))
-            {
-                DestroyChunk(DestroyChunkSlave.CurrentChunkPosition.Value);
-            }
-
-            return false;
-        };
+        LoadMap(currentlyLoadedMap);
     }
-    private void Update()
+    public static void LoadMap(MapData data)
     {
-        PlayerPosition = Utility.WorldPositionToChunkPosition(Player.Instance.transform.position);
+        currentlyLoadedMap = data;
 
-        CreateChunkSlave.Update();
-        DestroyChunkSlave.Update();
-    }
-    public static bool ContainsKey(Vector3 key)
-    {
-        return chunks.ContainsKey(key);
-    }
-    private bool IsWithinRange(Vector2 position)
-    {
-        return Vector2.Distance(PlayerPosition, position) <= CHUNK_MAX_DISTANCE;
-    }
-    private void CreateChunk(Vector3 chunkPosition)
-    {
-        Chunk newChunk = new Chunk(chunkPosition);
-
-        chunks.Add(chunkPosition, newChunk);
-        ChunkGenerator.RenderChunk(newChunk);
-    }
-    private void DestroyChunk(Vector3 chunkPosition)
-    {
-        Chunk chunk = chunks[chunkPosition];
-        chunks.Remove(chunkPosition);
-
-        Destroy(chunk.GameObject);
-
-        if(DestroyChunkSlave.CurrentChunkPosition == chunkPosition)
+        foreach (Chunk chunk in data.ChunkObjects)
         {
-            DestroyChunkSlave.CurrentChunkPosition = null;
+            ChunkGenerator.RenderChunk(chunk);
         }
     }
-
 }
