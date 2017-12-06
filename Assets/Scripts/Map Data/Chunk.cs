@@ -4,17 +4,19 @@ using UnityEngine;
 
 public class Chunk {
 
+    private const float NOISE_ZOOM = 20;
+
     private Chunk() { }
     public Chunk(Vector3 chunkOffset)
     {
         this.chunkOffset = chunkOffset;
         this.chunkOffset.z = 0;
-        
+                        
         for (int x = 0; x < CHUNK_SIZE; x++)
         {
             for (int y = 0; y < CHUNK_SIZE; y++)
             {
-                tiles[x, y] = (byte)Random.Range(0, TileType.AllTypes.Count - 1);
+                tiles[x, y] = (byte)Mathf.Round((TileType.AllTypes.Count - 1) * GetPerlinValue(x, y));
             }
         }
     }
@@ -31,6 +33,12 @@ public class Chunk {
     private byte[,] tiles = new byte[CHUNK_SIZE, CHUNK_SIZE];
     private GameObject gameObject;
     
+    private float GetPerlinValue(int x, int y)
+    {
+        return Mathf.PerlinNoise(
+            (float)(x + chunkOffset.x * Chunk.CHUNK_SIZE) / (float)MapData.MAPSIZE * NOISE_ZOOM,
+            (float)(y + chunkOffset.y * Chunk.CHUNK_SIZE) / (float)MapData.MAPSIZE * NOISE_ZOOM);
+    }
     public void AssignGameObject(GameObject obj)
     {
         if(gameObject != null)
