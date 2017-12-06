@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,7 +22,7 @@ public class PlayerCamera : MonoBehaviour {
     private const float ORTHOGRAPHIC_MIN = 10;
     private const float ORTHOGRAPHIC_MAX = 50;
 
-    private new Camera camera;
+    private static new Camera camera;
 
     private void Awake()
     {
@@ -33,6 +34,12 @@ public class PlayerCamera : MonoBehaviour {
     {
         PollInput();
         ProcessInput();
+    }
+    public static void Center()
+    {
+        float center = Mathf.Sqrt(MapDataManager.CurrentlyLoadedMap.ChunkPositions.Count()) / 2 * Chunk.CHUNK_SIZE;
+
+        camera.transform.position = new Vector3(center, center);
     }
     private void PollInput()
     {

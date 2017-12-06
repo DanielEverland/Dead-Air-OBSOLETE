@@ -12,6 +12,7 @@ public class Game : MonoBehaviour {
         TileType.LoadAllTileTypes,
         ChunkGenerator.Initialize,
         MapDataManager.Initialize,
+        PlayerCamera.Center,
     };
 
     private void Start()
