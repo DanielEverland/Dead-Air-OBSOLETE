@@ -10,7 +10,7 @@ public class ChunkGenerator {
     private static int verticeCount;
     private static MeshFilter currentMeshFilter;
     private static Mesh currentMesh;
-    private static List<Vector3> vertices = new List<Vector3>();
+    private static Vector3[] vertices = new Vector3[(Chunk.CHUNK_SIZE * Chunk.CHUNK_SIZE) * 4];
     private static List<List<int>> triangles = new List<List<int>>();
     private static List<Material> materials = new List<Material>();
     private static Vector3[] Normals
@@ -35,7 +35,6 @@ public class ChunkGenerator {
         currentMesh = new Mesh();
         verticeCount = 0;
         materials.Clear();
-        vertices.Clear();
         triangles.Clear();
 
         chunk.AssignGameObject(currentMeshFilter.gameObject);
@@ -48,7 +47,7 @@ public class ChunkGenerator {
             }
         }
 
-        currentMesh.vertices = vertices.ToArray();
+        currentMesh.vertices = vertices;
         currentMesh.subMeshCount = triangles.Count;
 
         for (int i = 0; i < triangles.Count; i++)
@@ -75,14 +74,11 @@ public class ChunkGenerator {
             triangles.Add(new List<int>());
         }
 
-        vertices.AddRange(new List<Vector3>(4)
-        {
-            new Vector3(0.5f    + x, 0.5f   + y),
-            new Vector3(0.5f    + x, -0.5f  + y),
-            new Vector3(-0.5f   + x, 0.5f   + y),
-            new Vector3(-0.5f   + x, -0.5f  + y),
-        });
-
+        vertices[verticeCount + 0] = new Vector3(0.5f + x, 0.5f + y);
+        vertices[verticeCount + 1] = new Vector3(0.5f + x, -0.5f + y);
+        vertices[verticeCount + 2] = new Vector3(-0.5f + x, 0.5f + y);
+        vertices[verticeCount + 3] = new Vector3(-0.5f + x, -0.5f + y);
+        
         triangles[submeshID].AddRange(new List<int>(6)
         {
             3 + verticeCount, 0 + verticeCount, 1 + verticeCount,
