@@ -37,7 +37,7 @@ public class PlayerCamera : MonoBehaviour {
     }
     public static void Center()
     {
-        float center = Mathf.Sqrt(MapDataManager.CurrentlyLoadedMap.ChunkPositions.Count()) / 2 * Chunk.CHUNK_SIZE;
+        float center = (float)MapData.MAPSIZE / 2;
 
         camera.transform.position = new Vector3(center, center);
     }

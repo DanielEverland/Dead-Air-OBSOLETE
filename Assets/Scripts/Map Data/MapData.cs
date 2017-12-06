@@ -18,7 +18,7 @@ public class MapData {
     /// <summary>
     /// How many tiles wide and high should the map be?
     /// </summary>
-    private const int MAPSIZE = 512;
+    public const int MAPSIZE = 512;
 
     private void PopulateMap()
     {
