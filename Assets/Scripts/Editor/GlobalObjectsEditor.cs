@@ -58,5 +58,7 @@ public class GlobalObjectsEditor : Editor {
         serializedObject.Update();
         reorderableList.DoLayoutList();
         serializedObject.ApplyModifiedProperties();
+
+        EditorUtility.SetDirty(target);
     }
 }
