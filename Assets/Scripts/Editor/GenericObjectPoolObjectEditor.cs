@@ -44,12 +44,19 @@ public class GenericObjectPoolObjectEditor : Editor {
 
             y += ELEMENT_SPACING + EditorGUIUtility.singleLineHeight;
 
+
+            Object oldObj = reference.Object;
             reference.Object = EditorGUI.ObjectField(
                 new Rect(rect.x, y, rect.width / 2 - LIST_SPACING, EditorGUIUtility.singleLineHeight),
                 "Object",
                 reference.Object,
                 typeof(Object),
                 false);
+
+            if(oldObj != reference.Object && reference.Key == "")
+            {
+                reference.Key = reference.Object.name;
+            }
 
             reference.Instances = EditorGUI.IntSlider(
                 new Rect(rect.x + rect.width / 2, y, rect.width / 2, EditorGUIUtility.singleLineHeight),
