@@ -6,9 +6,11 @@ public class EntityObjectPool : GenericObjectPoolBehaviour {
 
     private static GenericObjectPoolBehaviour instance;
 
-	private void Awake()
+	protected override void Awake()
     {
         instance = this;
+
+        base.Awake();
     }
     public new static GameObject GetObject(string key)
     {

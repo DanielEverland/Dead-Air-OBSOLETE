@@ -12,7 +12,7 @@ public class GenericObjectPoolBehaviour : MonoBehaviour {
     private Dictionary<string, Object> originalObjects;
     private Dictionary<int, string> objectKeys;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         pool = new Dictionary<string, Queue<Object>>();
         originalObjects = new Dictionary<string, Object>();
@@ -51,10 +51,20 @@ public class GenericObjectPoolBehaviour : MonoBehaviour {
 
         if(toReturn is GameObject)
         {
-            return (toReturn as GameObject);
+            ReturnObject(toReturn as GameObject);
         }
 
         return toReturn;
+    }
+    private void ReleaseObject(Object obj)
+    {
+        if(obj is GameObject)
+        {
+            GameObject gameObj = obj as GameObject;
+
+            gameObj.transform.SetParent(null);
+            gameObj.SetActive(true);
+        }
     }
     private void ReturnObject(GameObject obj)
     {
@@ -68,6 +78,7 @@ public class GenericObjectPoolBehaviour : MonoBehaviour {
             Object obj = pool[key].Dequeue();
 
             objectKeys.Add(obj.GetInstanceID(), key);
+            ReleaseObject(obj);
 
             return obj;
         }
