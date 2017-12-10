@@ -15,6 +15,8 @@ public class GenericObjectPoolBehaviour : MonoBehaviour {
     private void Awake()
     {
         pool = new Dictionary<string, Queue<Object>>();
+        originalObjects = new Dictionary<string, Object>();
+        objectKeys = new Dictionary<int, string>();
 
         if(references == null)
         {
