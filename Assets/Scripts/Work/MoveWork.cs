@@ -15,7 +15,7 @@ public class MoveWork : Work
     {
         Owner.SetTargetPosition(targetPosition);
     }
-    protected override bool IsDone()
+    public override bool IsDone()
     {
         return (Vector2)Owner.transform.position == targetPosition;
     }

@@ -6,4 +6,5 @@ public interface IWork {
 
     void SetOwner(WorkableEntity owner);
     void Poll();
+    bool IsDone();
 }

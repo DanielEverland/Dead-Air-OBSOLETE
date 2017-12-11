@@ -15,6 +15,12 @@ public abstract class Work : IWork {
     }
     public void Poll()
     {
+        if (owner == null)
+        {
+            Debug.LogError("NO OWNER ASSIGNED");
+            return;
+        }            
+
         Update();
 
         if (IsDone())
@@ -22,9 +28,6 @@ public abstract class Work : IWork {
             owner.StopWorking();
         }
     }
-    protected virtual void Update()
-    {
-
-    }
-    protected abstract bool IsDone();
+    protected virtual void Update() { }
+    public abstract bool IsDone();
 }

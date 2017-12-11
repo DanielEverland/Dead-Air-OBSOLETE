@@ -7,7 +7,7 @@ public abstract class WorkableEntity : MovableEntity
 {
     public IWork CurrentWork { get { return currentWork; } }
 
-    protected abstract WorkManager WorkManager { get; }
+    public abstract WorkManager WorkManager { get; }
 
     private IWork currentWork;
 
