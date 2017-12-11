@@ -8,6 +8,10 @@ public static class Utility {
 
     public const int CONTEXT_MENU_ORDER = 100;
 
+    public static Vector2 WorldPositionToLocalChunkPosition(Vector3 position)
+    {
+        return new Vector2(Mathf.RoundToInt(position.x % Chunk.CHUNK_SIZE), Mathf.RoundToInt(position.y % Chunk.CHUNK_SIZE));
+    }
     public static Vector2 WorldPositionToChunkPosition(Vector3 position)
     {
         return new Vector2(Mathf.FloorToInt(position.x / Chunk.CHUNK_SIZE), Mathf.FloorToInt(position.y / Chunk.CHUNK_SIZE));

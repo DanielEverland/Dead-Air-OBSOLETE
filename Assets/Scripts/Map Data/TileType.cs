@@ -27,6 +27,7 @@ public class TileType : ScriptableObject {
         }
     }
     
+    public bool IsSpawnable { get { return _isSpawnable; } }
     public byte ID { get; private set; }
     public Sprite Sprite { get { return _appearance; } }
     public Texture2D Texture
@@ -55,6 +56,8 @@ public class TileType : ScriptableObject {
 
     [SerializeField]
     private Sprite _appearance;
+    [SerializeField]
+    private bool _isSpawnable;
 
     private void Load()
     {

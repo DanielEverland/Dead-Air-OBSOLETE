@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class Entity : MonoBehaviour {
+    
+    private Dictionary<string, object> data;
 
     public static T CreateEntity<T>() where T : Entity
     {
@@ -26,6 +28,34 @@ public abstract class Entity : MonoBehaviour {
     }	
 
     protected virtual void CreateReferences() { }
+    
+    public void Serialize()
+    {
+        throw new NotImplementedException("Implement data serialization here");
+    }
+    public void Deserialize()
+    {
+        throw new NotImplementedException("Implement data deserialization here");
+    }
+    public bool DataExists(string key)
+    {
+        return data.ContainsKey(key);
+    }
+    public void SetData(string key, object obj)
+    {
+        if (data.ContainsKey(key))
+        {
+            data[key] = obj;
+        }
+        else
+        {
+            data.Add(key, obj);
+        }
+    }
+    public object GetData(string key)
+    {
+        return data[key];
+    }
 
     public abstract string PrefabName { get; }
 }

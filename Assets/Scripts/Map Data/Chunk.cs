@@ -33,6 +33,12 @@ public class Chunk {
     private byte[,] tiles = new byte[CHUNK_SIZE, CHUNK_SIZE];
     private GameObject gameObject;
     
+    public static bool IsValidLocalPosition(Vector3 position)
+    {
+        return position.x >= 0 && position.y >= 0
+            &&
+            position.x < CHUNK_SIZE && position.y < CHUNK_SIZE;
+    }
     private float GetPerlinValue(int x, int y)
     {
         return Mathf.PerlinNoise(
