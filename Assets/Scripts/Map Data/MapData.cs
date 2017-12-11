@@ -26,7 +26,9 @@ public class MapData {
 
         if (((float)MAPSIZE / (float)Chunk.CHUNK_SIZE) % 1 != 0)
         {
+#pragma warning disable 
             Debug.LogError("Selected mapsize is unvalid. Must be a multiple of chunk size (" + Chunk.CHUNK_SIZE + "). Map size is (" + MAPSIZE + ", " + MAPSIZE + ")");
+#pragma warning restore
         }
 
         int chunkCount = (int)((float)MAPSIZE / (float)Chunk.CHUNK_SIZE);
