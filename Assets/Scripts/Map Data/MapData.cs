@@ -12,9 +12,11 @@ public class MapData {
 
     private static MapData instance;
 
-    public IEnumerable<Chunk> ChunkObjects { get { return _chunks.Values; } }
-    public IEnumerable<Vector2> ChunkPositions { get { return _chunks.Keys; } }
-    public IDictionary<Vector2, Chunk> Chunks { get { return _chunks; } }
+    public static IEnumerable<Entity> Entities { get { return instance._entities; } }
+
+    public static IEnumerable<Chunk> ChunkObjects { get { return instance._chunks.Values; } }
+    public static IEnumerable<Vector2> ChunkPositions { get { return instance._chunks.Keys; } }
+    public static IDictionary<Vector2, Chunk> Chunks { get { return instance._chunks; } }
 
     private Dictionary<Vector2, Chunk> _chunks;
     private List<Entity> _entities;
@@ -66,12 +68,12 @@ public class MapData {
 
         Vector2 chunkPosition = Utility.WorldPositionToChunkPosition(position);
 
-        if (!instance.Chunks.ContainsKey(chunkPosition))
+        if (!Chunks.ContainsKey(chunkPosition))
         {
             throw new System.NullReferenceException("There is no chunk at " + chunkPosition + ". Input: " + position);
         }
 
-        Chunk chunk = instance.Chunks[chunkPosition];
+        Chunk chunk = Chunks[chunkPosition];
 
         Vector2 localPos = Utility.WorldPositionToLocalChunkPosition(position);
 

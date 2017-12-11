@@ -37,9 +37,20 @@ public class PlayerCamera : MonoBehaviour {
     }
     public static void Center()
     {
-        float center = (float)MapData.MAPSIZE / 2;
+        IEnumerable<Entity> colonists = MapData.Entities.Where(x => x.GetType() == typeof(Colonist));
 
-        camera.transform.position = new Vector3(center, center);
+        Vector3 cumulativePosition = Vector3.zero;
+
+        foreach (Entity entity in colonists)
+        {
+            cumulativePosition += entity.transform.position;
+        }
+
+        camera.transform.position = new Vector2()
+        {
+            x = cumulativePosition.x / colonists.Count(),
+            y = cumulativePosition.y / colonists.Count(),
+        };
     }
     private void PollInput()
     {

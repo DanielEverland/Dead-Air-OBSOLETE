@@ -19,13 +19,11 @@ public class MapDataManager : MonoBehaviour {
 
         currentlyLoadedMap = new MapData();
 
-        LoadMap(currentlyLoadedMap);
+        LoadMap();
     }
-    public static void LoadMap(MapData data)
+    public static void LoadMap()
     {
-        currentlyLoadedMap = data;
-
-        foreach (Chunk chunk in data.ChunkObjects)
+        foreach (Chunk chunk in MapData.ChunkObjects)
         {
             ChunkGenerator.RenderChunk(chunk);
         }
