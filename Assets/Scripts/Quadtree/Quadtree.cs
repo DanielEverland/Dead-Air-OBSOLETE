@@ -22,7 +22,7 @@ public class Quadtree<T> {
     {
         root.Insert(new NodeObject<T>(rect, obj));
     }
-    public List<T> Get(Rect rect)
+    public List<T> Query(Rect rect)
     {
         return root.Query(rect);
     }
