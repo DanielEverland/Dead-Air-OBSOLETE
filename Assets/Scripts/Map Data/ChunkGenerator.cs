@@ -74,10 +74,10 @@ public class ChunkGenerator {
             triangles.Add(new List<int>());
         }
 
-        vertices[verticeCount + 0] = new Vector3(0.5f + x, 0.5f + y);
-        vertices[verticeCount + 1] = new Vector3(0.5f + x, -0.5f + y);
-        vertices[verticeCount + 2] = new Vector3(-0.5f + x, 0.5f + y);
-        vertices[verticeCount + 3] = new Vector3(-0.5f + x, -0.5f + y);
+        vertices[verticeCount + 0] = new Vector3(1 + x, 1 + y);
+        vertices[verticeCount + 1] = new Vector3(1 + x, 0 + y);
+        vertices[verticeCount + 2] = new Vector3(0 + x, 1 + y);
+        vertices[verticeCount + 3] = new Vector3(0 + x, 0 + y);
         
         triangles[submeshID].AddRange(new List<int>(6)
         {
