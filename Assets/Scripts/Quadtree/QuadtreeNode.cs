@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,6 +20,7 @@ public class QuadtreeNode<T> {
     private readonly int _maxObjects;
 
     private bool HasChildNodes { get { return _childNodes != null; } }
+    private bool HasObjects { get { return _objects.Count > 0; } }
 
     private ChildNodes<T> _childNodes;
 
@@ -84,6 +86,54 @@ public class QuadtreeNode<T> {
             _childNodes.Do(x => x.Draw(color));
         }
     }
+    public List<T> Query(Rect rect)
+    {
+        List<T> results = new List<T>();
+
+        if (HasChildNodes)
+        {
+            if (Utility.Encapsulates(_rect, rect))
+            {
+                results.AddRange(AddObjectsRecursively());
+            }
+            else if (Utility.Intersects(rect, _rect))
+            {
+                _childNodes.Do(x => x.Query(rect));
+            }
+        }
+
+        if (HasObjects)
+        {
+            for (int i = 0; i < _objects.Count; i++)
+            {
+                if(Utility.Intersects(rect, _objects[i].Rect) || Utility.Encapsulates(_objects[i].Rect, rect))
+                {
+                    results.Add(_objects[i].Object);
+                }
+            }
+        }
+
+        return results;
+    }
+    private List<T> AddObjectsRecursively()
+    {
+        List<T> results = new List<T>();
+
+        if(HasObjects)
+        {
+            results.AddRange(_objects.Select(x => x.Object));
+        }
+
+        if (HasChildNodes)
+        {
+            for (int i = 0; i < _childNodes.Count; i++)
+            {
+                results.AddRange(_childNodes[i].AddObjectsRecursively());
+            }
+        }
+
+        return results;
+    }
 
     private class ChildNodes<T>
     {
@@ -98,6 +148,20 @@ public class QuadtreeNode<T> {
                 new QuadtreeNode<T>(parentNode._rect.GetFourthQuadrant(), parentNode._maxObjects),
             };
         }
+
+        public QuadtreeNode<T> this[int index]
+        {
+            get
+            {
+                return _nodes[index];
+            }
+            set
+            {
+                _nodes[index] = value;
+            }
+        }
+
+        public int Count { get { return _nodes.Length; } }
 
         private readonly QuadtreeNode<T>[] _nodes;
 

@@ -22,6 +22,10 @@ public class Quadtree<T> {
     {
         root.Insert(new NodeObject<T>(rect, obj));
     }
+    public List<T> Get(Rect rect)
+    {
+
+    }
     public void Draw(Color color)
     {
         root.Draw(color);
