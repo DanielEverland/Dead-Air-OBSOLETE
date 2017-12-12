@@ -19,6 +19,12 @@ public class Game : MonoBehaviour {
     {
         InitializeGame();
     }
+    private void Update()
+    {
+        MapData.RefreshQuadtree();
+
+        MapData.EntityQuadtree.Draw(Color.red);
+    }
     private static void InitializeGame()
     {
         for (int i = 0; i < LoadFlow.Count; i++)

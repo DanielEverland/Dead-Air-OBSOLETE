@@ -7,6 +7,10 @@ public abstract class Entity : MonoBehaviour {
     
     private Dictionary<string, object> data;
 
+    public Rect Rect { get { return new Rect(transform.position, Size); } }
+
+    public virtual Vector2 Size { get { return Vector2.one; } }
+
     public static T CreateEntity<T>() where T : Entity
     {
         return CreateEntity<T>(typeof(T).Name);

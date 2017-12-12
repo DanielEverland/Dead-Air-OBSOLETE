@@ -73,7 +73,16 @@ public class QuadtreeNode<T> {
     }
     public bool Fits(NodeObject<T> obj)
     {
-        return obj.Rect.Overlaps(_rect);
+        return Utility.Encapsulates(obj.Rect, _rect);
+    }
+    public void Draw(Color color)
+    {
+        EG_Debug.DrawRect(_rect, color);
+
+        if (HasChildNodes)
+        {
+            _childNodes.Do(x => x.Draw(color));
+        }
     }
 
     private class ChildNodes<T>
@@ -111,10 +120,18 @@ public class QuadtreeNode<T> {
                 if (_nodes[i].Fits(obj))
                 {
                     _nodes[i].Insert(obj);
+                    return;
                 }
             }
-
-            throw new System.ArgumentException("Rect doesn't fit in any child nodes. Call Fits before Insert");
+            
+            throw new System.ArgumentException("Rect " + obj.Rect + " doesn't fit in any child nodes. Call Fits before Insert");
+        }
+        public void Do(System.Action<QuadtreeNode<T>> action)
+        {
+            for (int i = 0; i < _nodes.Length; i++)
+            {
+                action.Invoke(_nodes[i]);
+            }
         }
     }
 }

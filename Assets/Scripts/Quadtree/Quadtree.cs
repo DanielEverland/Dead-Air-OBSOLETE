@@ -13,7 +13,7 @@ public class Quadtree<T> {
             throw new System.ArgumentException("Size must be power of two!");
         }
 
-        root = new QuadtreeNode<T>(new Rect(0, size, size, size));
+        root = new QuadtreeNode<T>(new Rect(0, 0, size, size));
     }
 
     private readonly QuadtreeNode<T> root;
@@ -21,5 +21,9 @@ public class Quadtree<T> {
     public void Insert(Rect rect, T obj)
     {
         root.Insert(new NodeObject<T>(rect, obj));
+    }
+    public void Draw(Color color)
+    {
+        root.Draw(color);
     }
 }

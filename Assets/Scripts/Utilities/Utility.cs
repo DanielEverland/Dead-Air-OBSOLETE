@@ -8,6 +8,30 @@ public static class Utility {
 
     public const int CONTEXT_MENU_ORDER = 100;
 
+    /// <summary>
+    /// Checks whether rect a is fully encapsulated by rect b
+    /// </summary>
+    public static bool Encapsulates(Rect a, Rect b)
+    {
+        return
+            a.x > b.x && a.x < b.x + b.width
+            &&
+            a.y > b.y && a.y < b.y + b.height
+            &&
+            a.x + a.width > b.x && a.x + a.width < b.x + b.width
+            &&
+            a.y + a.height > b.y && a.y + a.height < b.y + b.height;
+    }
+    public static Vector2[] GetCornerPoints(Vector2 center, Vector2 size)
+    {
+        return new Vector2[4]
+        {
+            new Vector2(center.x - size.x / 2, center.y + size.y / 2),
+            new Vector2(center.x + size.x / 2, center.y + size.y / 2),
+            new Vector2(center.x + size.x / 2, center.y - size.y / 2),
+            new Vector2(center.x - size.x / 2, center.y - size.y / 2),
+        };
+    }
     public static Vector2 WorldPositionToLocalChunkPosition(Vector3 position)
     {
         return new Vector2(Mathf.RoundToInt(position.x % Chunk.CHUNK_SIZE), Mathf.RoundToInt(position.y % Chunk.CHUNK_SIZE));

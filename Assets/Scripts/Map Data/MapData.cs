@@ -7,6 +7,8 @@ public class MapData {
     {
         instance = this;
 
+        _entityQuadtree = new Quadtree<Entity>(MAPSIZE);
+
         PopulateMap();
     }
 
@@ -18,8 +20,11 @@ public class MapData {
     public static IEnumerable<Vector2> ChunkPositions { get { return instance._chunks.Keys; } }
     public static IDictionary<Vector2, Chunk> Chunks { get { return instance._chunks; } }
 
+    public static Quadtree<Entity> EntityQuadtree { get { return instance._entityQuadtree; } }
+
     private Dictionary<Vector2, Chunk> _chunks;
     private List<Entity> _entities;
+    private Quadtree<Entity> _entityQuadtree;
 
     /// <summary>
     /// How many tiles wide and high should the map be?
@@ -41,6 +46,15 @@ public class MapData {
     /// </summary>
     private const float COLONIST_SPAWN_RADIUS = 10;
 
+    public static void RefreshQuadtree()
+    {
+        instance._entityQuadtree = new Quadtree<Entity>(MAPSIZE);
+
+        for (int i = 0; i < instance._entities.Count; i++)
+        {
+            instance._entityQuadtree.Insert(instance._entities[i].Rect, instance._entities[i]);
+        }
+    }
     public static Entity CreateEntity<T>() where T : Entity
     {
         Entity entity = Entity.CreateEntity<T>();

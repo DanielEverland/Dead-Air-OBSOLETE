@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public static class Extensions {
-
+    
     /// <summary>
     /// Returns the bottom right quadrant
     /// </summary>
