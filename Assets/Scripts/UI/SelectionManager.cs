@@ -52,12 +52,10 @@ public class SelectionManager : MonoBehaviour {
         List<Entity> entitiesSelectedThisFrame = MapData.EntityQuadtree.Query(rect);
         List<Entity> newEntities = new List<Entity>(entitiesSelectedThisFrame.Except(selectedEntities.Keys));
         List<Entity> entitiesToRemove = new List<Entity>(selectedEntities.Keys.Except(entitiesSelectedThisFrame));
-
-        Debug.Log(entitiesSelectedThisFrame.Count);
-
+        
         foreach (Entity entity in entitiesToRemove)
         {
-            //RemoveEntity(entity);
+            RemoveEntity(entity);
         }
 
         foreach (Entity entity in newEntities)
@@ -86,6 +84,15 @@ public class SelectionManager : MonoBehaviour {
         selectedEntities[entity].Remove();
 
         selectedEntities.Remove(entity);
+    }
+    private void Clear()
+    {
+        foreach (SelectionHandler handler in selectedEntities.Values)
+        {
+            handler.Remove();
+        }
+
+        selectedEntities.Clear();
     }
 
     private class SelectionHandler

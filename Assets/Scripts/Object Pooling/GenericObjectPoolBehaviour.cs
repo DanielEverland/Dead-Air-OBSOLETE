@@ -89,9 +89,12 @@ public class GenericObjectPoolBehaviour : MonoBehaviour {
     }
     public void ReturnObject(Object obj)
     {
-        if (objectKeys.ContainsKey(obj.GetInstanceID()))
+        int instanceID = obj.GetInstanceID();
+
+        if (objectKeys.ContainsKey(instanceID))
         {
-            string key = objectKeys[obj.GetInstanceID()];
+            string key = objectKeys[instanceID];
+            objectKeys.Remove(instanceID);
 
             if(obj is GameObject)
             {
