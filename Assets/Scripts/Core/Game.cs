@@ -23,7 +23,7 @@ public class Game : MonoBehaviour {
     {
         MapData.RefreshQuadtree();
 
-        MapData.EntityQuadtree.Draw(Color.red);
+        MapData.EntityQuadtree.Draw();
     }
     private static void InitializeGame()
     {

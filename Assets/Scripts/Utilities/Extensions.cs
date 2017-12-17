@@ -6,6 +6,20 @@ using UnityEngine;
 public static class Extensions {
     
     /// <summary>
+    /// Returns a new rect that is shrunk by <paramref name="amount"/> on all sides 
+    /// </summary>
+    public static Rect Shrink(this Rect rect, float amount)
+    {
+        return rect.Shrink(amount, amount, amount, amount);
+    }
+    /// <summary>
+    /// Returns a new rect that is shrunk by amounts specified 
+    /// </summary>
+    public static Rect Shrink(this Rect rect, float left, float top, float right, float bottom)
+    {
+        return new Rect(rect.x + left, rect.y + bottom, rect.width - (left + right), rect.height - (top + bottom));
+    }
+    /// <summary>
     /// Returns the bottom right quadrant
     /// </summary>
     public static Rect GetFourthQuadrant(this Rect rect)

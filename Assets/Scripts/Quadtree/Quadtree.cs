@@ -26,8 +26,8 @@ public class Quadtree<T> {
     {
         return root.Query(rect);
     }
-    public void Draw(Color color)
+    public void Draw()
     {
-        root.Draw(color);
+        root.Draw();
     }
 }

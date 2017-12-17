@@ -7,7 +7,7 @@ public abstract class Entity : MonoBehaviour {
     
     private Dictionary<string, object> data;
 
-    public Rect Rect { get { return new Rect(transform.position, Size); } }
+    public Rect Rect { get { return new Rect(transform.position - (Vector3)Size / 2, Size); } }
 
     public virtual Vector2 Size { get { return Vector2.one; } }
 

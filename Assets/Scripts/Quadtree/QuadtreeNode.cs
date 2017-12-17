@@ -23,10 +23,18 @@ public class QuadtreeNode<T> {
     private bool HasObjects { get { return _objects.Count > 0; } }
 
     private ChildNodes<T> _childNodes;
+    private int _lastActivityFrameNumber;
+
+    private const byte LAST_ACTIVITY_DRAW_MARGIN = 2;
+    private readonly Color DRAW_QUAD_COLOR = Color.red;
+    private readonly Color DRAW_ACTIVITY_COLOR = Color.cyan;
+    private readonly Color DRAW_OBJECT_COLOR = Color.white;
 
     public void Insert(NodeObject<T> obj)
     {
-        if(HasChildNodes)
+        PollActivity();
+
+        if (HasChildNodes)
         {
             if (_childNodes.Fits(obj))
             {
@@ -47,6 +55,8 @@ public class QuadtreeNode<T> {
         if (HasChildNodes)
             return;
 
+        PollActivity();
+
         if (_objects.Count > _maxObjects)
             DoSplit();
     }
@@ -62,39 +72,56 @@ public class QuadtreeNode<T> {
                 _childNodes.Insert(tempObjectList[i]);
             }
         }
+
+        PollActivity();
     }
     private void Add(NodeObject<T> obj)
     {
         _objects.Add(obj);
 
         PollSplit();
+        PollActivity();
     }
     private void Remove(NodeObject<T> obj)
     {
         _objects.Remove(obj);
+
+        PollActivity();
+    }
+    private void PollActivity()
+    {
+        _lastActivityFrameNumber = Time.frameCount;
     }
     public bool Fits(NodeObject<T> obj)
     {
         return Utility.Encapsulates(obj.Rect, _rect);
     }
-    public void Draw(Color color)
+    public void Draw()
     {
-        EG_Debug.DrawRect(_rect, color);
+        EG_Debug.DrawRect(_rect, DRAW_QUAD_COLOR);
+
+        if(Time.frameCount - _lastActivityFrameNumber <= LAST_ACTIVITY_DRAW_MARGIN)
+            EG_Debug.DrawRect(_rect.Shrink(0.1f), DRAW_ACTIVITY_COLOR);
+
+        for (int i = 0; i < _objects.Count; i++)
+            EG_Debug.DrawRect(_objects[i].Rect, DRAW_OBJECT_COLOR);
 
         if (HasChildNodes)
         {
-            _childNodes.Do(x => x.Draw(color));
+            _childNodes.Do(x => x.Draw());
         }
     }
     public List<T> Query(Rect rect)
     {
+        PollActivity();
+
         List<T> results = new List<T>();
 
         if (HasChildNodes)
         {
             if (Utility.Encapsulates(_rect, rect))
             {
-                results.AddRange(AddObjectsRecursively());
+                results.AddRange(GetObjectsRecursively());
             }
             else if (Utility.Intersects(rect, _rect))
             {
@@ -115,8 +142,10 @@ public class QuadtreeNode<T> {
 
         return results;
     }
-    private List<T> AddObjectsRecursively()
+    private List<T> GetObjectsRecursively()
     {
+        PollActivity();
+
         List<T> results = new List<T>();
 
         if(HasObjects)
@@ -128,7 +157,7 @@ public class QuadtreeNode<T> {
         {
             for (int i = 0; i < _childNodes.Count; i++)
             {
-                results.AddRange(_childNodes[i].AddObjectsRecursively());
+                results.AddRange(_childNodes[i].GetObjectsRecursively());
             }
         }
 
