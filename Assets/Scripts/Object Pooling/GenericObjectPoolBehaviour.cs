@@ -93,7 +93,11 @@ public class GenericObjectPoolBehaviour : MonoBehaviour {
         {
             string key = objectKeys[obj.GetInstanceID()];
 
-            ReturnObject(obj);
+            if(obj is GameObject)
+            {
+                ReturnObject((GameObject)obj);
+            }
+            
             pool[key].Enqueue(obj);
         }
         else
