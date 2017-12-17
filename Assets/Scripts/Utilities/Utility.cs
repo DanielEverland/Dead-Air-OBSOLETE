@@ -32,6 +32,13 @@ public static class Utility {
             &&
             a.y + a.height > b.y && a.y + a.height < b.y + b.height;
     }
+    public static Rect CornerPointsToRect(Vector2[] points)
+    {
+        if (points.Length != 4)
+            throw new System.ArgumentException("Corner points length must be exactly 4!");
+
+        return new Rect(points[0].x, points[0].y, points[2].x - points[0].x, points[2].y - points[0].y);
+    }
     public static Vector2[] GetCornerPoints(Vector2 center, Vector2 size)
     {
         return new Vector2[4]

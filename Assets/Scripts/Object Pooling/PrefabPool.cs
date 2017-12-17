@@ -16,6 +16,10 @@ public class PrefabPool : GenericObjectPoolBehaviour {
     {
         return (GameObject)instance.GetObject(key);
     }
+    public static T GetObject<T>(string key) where T : Object
+    {
+        return (T)instance.GetObject(key);
+    }
     public static void ReturnObject(GameObject obj)
     {
         instance.ReturnObject(obj);

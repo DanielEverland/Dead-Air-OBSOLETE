@@ -5,6 +5,10 @@ using UnityEngine;
 
 public static class Extensions {
     
+    public static Vector2[] GetCornerPoints(this Rect rect)
+    {
+        return Utility.GetCornerPoints(rect.center, rect.size);
+    }
     /// <summary>
     /// Returns a new rect that is shrunk by <paramref name="amount"/> on all sides 
     /// </summary>

@@ -14,8 +14,6 @@ public class SelectionManager : MonoBehaviour {
 
 	private void Update()
     {
-        CallSelectionHandlers();
-
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             downPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -38,13 +36,6 @@ public class SelectionManager : MonoBehaviour {
         else
         {
             RenderUI(Rect.zero);
-        }
-    }
-    private void CallSelectionHandlers()
-    {
-        foreach (SelectionHandler handler in selectedEntities.Values)
-        {
-            handler.Update();
         }
     }
     private void HandleInput(Rect rect)
@@ -101,23 +92,21 @@ public class SelectionManager : MonoBehaviour {
 
         public SelectionHandler(Entity entity)
         {
-            uiMarker = PrefabPool.GetObject(PREFAB_NAME).GetComponent<RectTransform>();
+            uiMarker = PrefabPool.GetObject<SelectionIndicator>(PREFAB_NAME);
             uiMarker.transform.SetParent(Canvas2D.Instance.transform);
+            uiMarker.Select(entity);
 
             this.entity = entity;
         }
 
         private const string PREFAB_NAME = "SelectionMarker";
 
-        private readonly RectTransform uiMarker;
+        private readonly SelectionIndicator uiMarker;
         private readonly Entity entity;
-
-        public void Update()
-        {
-            uiMarker.transform.position = Camera.main.WorldToScreenPoint(entity.transform.position);
-        }
+        
         public void Remove()
         {
+            uiMarker.Clear();
             PrefabPool.ReturnObject(uiMarker.gameObject);
         }
     }
