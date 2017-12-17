@@ -64,12 +64,17 @@ public class QuadtreeNode<T> {
     {
         _childNodes = new ChildNodes<T>(this);
         List<NodeObject<T>> tempObjectList = new List<NodeObject<T>>(_objects);
+        _objects.Clear();
 
         for (int i = 0; i < tempObjectList.Count; i++)
         {
             if (_childNodes.Fits(tempObjectList[i]))
             {
                 _childNodes.Insert(tempObjectList[i]);
+            }
+            else
+            {
+                _objects.Add(tempObjectList[i]);
             }
         }
 
