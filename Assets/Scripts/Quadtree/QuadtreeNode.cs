@@ -119,8 +119,19 @@ public class QuadtreeNode<T> {
     public List<T> Query(Rect rect)
     {
         PollActivity();
-
+        
         List<T> results = new List<T>();
+
+        if (HasObjects)
+        {
+            for (int i = 0; i < _objects.Count; i++)
+            {
+                if (Utility.Intersects(_objects[i].Rect, rect) || Utility.Encapsulates(_objects[i].Rect, rect))
+                {
+                    results.Add(_objects[i].Object);
+                }
+            }
+        }
 
         if (HasChildNodes)
         {
@@ -128,23 +139,15 @@ public class QuadtreeNode<T> {
             {
                 results.AddRange(GetObjectsRecursively());
             }
-            else if (Utility.Intersects(rect, _rect))
+            else if (Utility.Intersects(_rect, rect))
             {
-                _childNodes.Do(x => x.Query(rect));
-            }
-        }
-
-        if (HasObjects)
-        {
-            for (int i = 0; i < _objects.Count; i++)
-            {
-                if(Utility.Intersects(rect, _objects[i].Rect) || Utility.Encapsulates(_objects[i].Rect, rect))
+                for (int i = 0; i < _childNodes.Count; i++)
                 {
-                    results.Add(_objects[i].Object);
+                    results.AddRange(_childNodes[i].Query(rect));
                 }
             }
         }
-
+        
         return results;
     }
     private List<T> GetObjectsRecursively()

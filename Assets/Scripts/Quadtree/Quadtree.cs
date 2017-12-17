@@ -16,11 +16,17 @@ public class Quadtree<T> {
         root = new QuadtreeNode<T>(new Rect(0, 0, size, size));
     }
 
+    public int Count { get { return _count; } }
+
     private readonly QuadtreeNode<T> root;
+
+    private int _count;
 
     public void Insert(Rect rect, T obj)
     {
         root.Insert(new NodeObject<T>(rect, obj));
+
+        _count++;
     }
     public List<T> Query(Rect rect)
     {

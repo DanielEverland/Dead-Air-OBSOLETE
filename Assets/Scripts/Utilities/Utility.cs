@@ -9,7 +9,7 @@ public static class Utility {
     public const int CONTEXT_MENU_ORDER = 100;
 
     /// <summary>
-    /// Checks whether rect a and b intersect
+    /// Checks whether <paramref name="a"/> and <paramref name="b"/> intersect
     /// </summary>
     public static bool Intersects(Rect a, Rect b)
     {
@@ -19,7 +19,7 @@ public static class Utility {
                 (b.y >= a.y + a.height));
     }
     /// <summary>
-    /// Checks whether rect a is fully encapsulated by rect b
+    /// Checks whether <paramref name="a"/> is fully encapsulated by <paramref name="b"/>
     /// </summary>
     public static bool Encapsulates(Rect a, Rect b)
     {
