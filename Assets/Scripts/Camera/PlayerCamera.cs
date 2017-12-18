@@ -6,6 +6,9 @@ using UnityEngine;
 [RequireComponent(typeof(Camera))]
 public class PlayerCamera : MonoBehaviour {
 
+    [SerializeField]
+    private float ratio;
+
     private bool isScrollWheelDown;
     private Vector3 mouseDelta;
     private Vector3 oldMousePosition;
@@ -29,11 +32,14 @@ public class PlayerCamera : MonoBehaviour {
         camera = GetComponent<Camera>();
 
         camera.orthographicSize = ORTHOGRAPHIC_MIN + ((float)(ORTHOGRAPHIC_MAX - ORTHOGRAPHIC_MIN) / 2);
+        ratio = camera.aspect;
     }
 	private void Update()
     {
         PollInput();
         ProcessInput();
+
+        camera.aspect = ratio;
     }
     public static void Center()
     {

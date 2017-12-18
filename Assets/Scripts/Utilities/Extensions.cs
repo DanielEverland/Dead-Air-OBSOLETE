@@ -4,7 +4,30 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public static class Extensions {
-    
+
+    public static Vector2 ToCellPosition(this Vector3 position)
+    {
+        return new Vector2()
+        {
+            x = Mathf.RoundToInt(position.x),
+            y = Mathf.RoundToInt(position.y),
+        };
+    }
+    public static Vector2 ToCellPosition(this Vector2 position)
+    {
+        return new Vector2()
+        {
+            x = Mathf.RoundToInt(position.x),
+            y = Mathf.RoundToInt(position.y),
+        };
+    }
+    public static void ForEach<T>(this IEnumerable<T> enumeration, System.Action<T> action)
+    {
+        foreach (T item in enumeration)
+        {
+            action(item);
+        }
+    }
     public static Vector2[] GetCornerPoints(this Rect rect)
     {
         return Utility.GetCornerPoints(rect.center, rect.size);
@@ -95,7 +118,7 @@ public static class Extensions {
     {
         return (x % 1) == 0;
     }
-	public static T Random<T>(this IEnumerable<T> list)
+    public static T Random<T>(this IEnumerable<T> list)
     {
         return list.ElementAt(UnityEngine.Random.Range(0, list.Count() - 1));
     }

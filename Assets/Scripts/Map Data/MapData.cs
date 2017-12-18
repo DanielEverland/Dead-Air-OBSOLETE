@@ -34,7 +34,7 @@ public class MapData {
     /// <summary>
     /// Minimum amount of colonists to spawn in new map
     /// </summary>
-    private const int COLONIST_AMOUNT_MIN = 3;
+    private const int COLONIST_AMOUNT_MIN = 4;
 
     /// <summary>
     /// Maximum amount of colonists to spawn in new map
@@ -42,9 +42,9 @@ public class MapData {
     private const int COLONIST_AMOUNT_MAX = 10;
 
     /// <summary>
-    /// Radius in which to spawn colonists of each other
+    /// How closely should colonists be placed? 1 leaves no extra space, 2 will leave as much space as there are colonists and so forth.
     /// </summary>
-    private const float COLONIST_SPAWN_RADIUS = 10;
+    private const float COLONIST_DENSITY = 5;
 
     public static void RefreshQuadtree()
     {
@@ -114,29 +114,68 @@ public class MapData {
     private void CreateColonists()
     {
         int amountOfColonistsToSpawn = Random.Range(COLONIST_AMOUNT_MIN, COLONIST_AMOUNT_MAX);
+        Vector2 spawnPosition = GetSpawnAnchor();
 
-        Vector2 spawnpoint = GetColonistSpawnPoint(amountOfColonistsToSpawn);
-        int radiusHalf = Mathf.RoundToInt(COLONIST_SPAWN_RADIUS / 2);
-        HashSet<Vector2> usedPositions = new HashSet<Vector2>();
+        List<Vector2> possiblePositions = GetPossibleSpawnPositions(spawnPosition, amountOfColonistsToSpawn);
 
-        while (amountOfColonistsToSpawn > 0)
+        for (int i = 0; i < amountOfColonistsToSpawn; i++)
         {
-            Vector2 point = new Vector2()
+            int index = Random.Range(0, possiblePositions.Count - 1);
+
+            CreateEntityAtPosition<Colonist>(possiblePositions[index]);
+
+            possiblePositions.RemoveAt(index);
+        }
+    }
+    private Vector2 GetSpawnAnchor()
+    {
+        Vector2 position = new Vector2(Random.Range(0, MapData.MAPSIZE - 1), Random.Range(0, MapData.MAPSIZE - 1));
+
+        if (MapData.GetTile(position).IsSpawnable)
+        {
+            return position;
+        }
+
+        return GetSpawnAnchor();
+    }
+    private List<Vector2> GetPossibleSpawnPositions(Vector2 position, int amountOfColonists)
+    {
+        HashSet<Vector2> closedPositions = new HashSet<Vector2>();
+        List<Vector2> openPositions = new List<Vector2>();
+        List<Vector2> potentialPositionQueue = new List<Vector2>();
+
+        openPositions.Add(position);
+
+        while (potentialPositionQueue.Count < amountOfColonists * COLONIST_DENSITY)
+        {
+            int index = Random.Range(0, openPositions.Count - 1);
+
+            PollPositionAsViableSpawnPoint(openPositions[index], ref closedPositions, ref openPositions, ref potentialPositionQueue);
+
+            openPositions.RemoveAt(index);
+        }        
+
+        return potentialPositionQueue;
+    }
+    private void PollPositionAsViableSpawnPoint(Vector2 position, ref HashSet<Vector2> closedPositions, ref List<Vector2> openPositions, ref List<Vector2> potentialPositionQueue)
+    {
+        closedPositions.Add(position);
+
+        if (MapData.GetTile(position).IsSpawnable)
+        {
+            potentialPositionQueue.Add(position);
+        }
+
+        for (int x = -1; x <= 1; x++)
+        {
+            for (int y = -1; y <= 1; y++)
             {
-                x = Random.Range(-radiusHalf, radiusHalf) + spawnpoint.x,
-                y = Random.Range(-radiusHalf, radiusHalf) + spawnpoint.y,
-            };
+                Vector2 neighborPosition = new Vector2(x, y) + position;
 
-            if (Vector2.Distance(point, spawnpoint) > COLONIST_SPAWN_RADIUS || !IsValidPosition(point) || usedPositions.Contains(point))
-                continue;
+                if (closedPositions.Contains(neighborPosition) || !MapData.IsValidPosition(neighborPosition))
+                    continue;
 
-            if (MapData.GetTile(point).IsSpawnable)
-            {
-                amountOfColonistsToSpawn--;
-
-                CreateEntityAtPosition<Colonist>(point);
-
-                usedPositions.Add(point);
+                openPositions.Add(neighborPosition);
             }
         }
     }
@@ -145,49 +184,6 @@ public class MapData {
         Entity entity = MapData.CreateEntity<T>();
 
         entity.transform.position = position;
-    }
-    private Vector2 GetColonistSpawnPoint(int amountOfColonistsToSpawn)
-    {
-        Vector2 point = new Vector2()
-        {
-            x = Random.Range(0, MAPSIZE),
-            y = Random.Range(0, MAPSIZE),
-        };
-
-        if (IsViableSpawnPoint(point, amountOfColonistsToSpawn))
-        {
-            return point;
-        }
-        else
-        {
-            return GetColonistSpawnPoint(amountOfColonistsToSpawn);
-        }
-    }
-    private bool IsViableSpawnPoint(Vector2 point, int amountOfColonistsToSpawn)
-    {
-        int radiusHalf = Mathf.RoundToInt(COLONIST_SPAWN_RADIUS / 2);
-        int viableSpawnPoints = 0;
-
-        for (int x = -radiusHalf; x < radiusHalf; x++)
-        {
-            for (int y = -radiusHalf; y < radiusHalf; y++)
-            {
-                if (viableSpawnPoints >= amountOfColonistsToSpawn)
-                    return true;
-
-                Vector2 currentPoint = new Vector2(point.x + x, point.y + y);
-
-                if (Vector2.Distance(currentPoint, point) > COLONIST_SPAWN_RADIUS || !IsValidPosition(currentPoint))
-                    continue;
-
-                if (MapData.GetTile(currentPoint).IsSpawnable)
-                {
-                    viableSpawnPoints++;
-                }
-            }
-        }
-
-        return false;
     }
     private void CreateChunks()
     {

@@ -18,6 +18,10 @@ public class SelectionManager : MonoBehaviour {
         {
             downPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         }
+        if (Input.GetKeyDown(KeyCode.Mouse1))
+        {
+            RightClick(Camera.main.ScreenToWorldPoint(Input.mousePosition).ToCellPosition());
+        }
 
         if (Input.GetKey(KeyCode.Mouse0))
         {
@@ -52,6 +56,20 @@ public class SelectionManager : MonoBehaviour {
         foreach (Entity entity in newEntities)
         {
             AddEntity(entity);
+        }
+    }
+    private void RightClick(Vector2 position)
+    {
+        List<WorkableEntity> unitsToMove = new List<WorkableEntity>(selectedEntities.Keys.Where(x => x is WorkableEntity).Select(x => x as WorkableEntity));
+        
+        if (unitsToMove.Count == 0)
+            return;
+
+        Queue<Vector2> unitPositions = new Queue<Vector2>(UnitFormation.GetFormation<SquareFormation>(position, unitsToMove.Count));
+
+        for (int i = 0; i < unitsToMove.Count; i++)
+        {
+            unitsToMove[i].AssignWork(new MoveWork(unitPositions.Dequeue()));
         }
     }
     private void RenderUI(Rect rect)

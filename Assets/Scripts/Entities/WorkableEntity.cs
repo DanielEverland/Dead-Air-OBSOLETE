@@ -38,6 +38,8 @@ public abstract class WorkableEntity : MovableEntity
     }
     public void AssignWork(IWork work)
     {
+        StopWorking();
+
         currentWork = work;
 
         work.SetOwner(this);
