@@ -14,7 +14,6 @@ public class Game : MonoBehaviour {
         ChunkGenerator.Initialize,
         MapDataManager.Initialize,
         PlayerCamera.Center,
-        HordeManager.Initialize,
     };
 
     private void Start()
@@ -25,9 +24,6 @@ public class Game : MonoBehaviour {
     {
         MapData.RefreshQuadtree();
         MapData.EntityQuadtree.Draw();
-
-        HordeManager.Update();
-        HordeManager.Draw();
     }
     private static void InitializeGame()
     {
