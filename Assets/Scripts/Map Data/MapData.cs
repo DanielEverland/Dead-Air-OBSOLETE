@@ -42,6 +42,26 @@ public class MapData {
     private const int COLONIST_AMOUNT_MAX = 10;
 
     /// <summary>
+    /// Minimum amount of zombies per horde
+    /// </summary>
+    private const int HORDES_ZOMBIE_AMOUNT_MIN = 10;
+
+    /// <summary>
+    /// Maximum amount of zombies per horde
+    /// </summary>
+    private const int HORDES_ZOMBIE_AMOUNT_MAX = 50;
+
+    /// <summary>
+    /// Minimum amount of hordes per map
+    /// </summary>
+    private const int HORDES_AMOUNT_PRE_MAP_MIN = 2;
+
+    /// <summary>
+    /// Maximum amount of hordes per map
+    /// </summary>
+    private const int HORDES_AMOUNT_PRE_MAP_MAX = 5;
+
+    /// <summary>
     /// How closely should colonists be placed? 1 leaves no extra space, 2 will leave as much space as there are colonists and so forth.
     /// </summary>
     private const float COLONIST_DENSITY = 5;
@@ -110,19 +130,38 @@ public class MapData {
         _entities = new List<Entity>();
 
         CreateColonists();
+        CreateZombies();
+    }
+    private void CreateZombies()
+    {
+        int amountOfHordesToSpawn = Random.Range(HORDES_AMOUNT_PRE_MAP_MIN, HORDES_AMOUNT_PRE_MAP_MAX);
+
+        for (int i = 0; i < amountOfHordesToSpawn; i++)
+        {
+            int amountOfZombiesToSpawn = Random.Range(HORDES_ZOMBIE_AMOUNT_MIN, HORDES_ZOMBIE_AMOUNT_MAX);
+
+            SpawnInCluster<Zombie>(amountOfZombiesToSpawn);
+        }        
     }
     private void CreateColonists()
     {
         int amountOfColonistsToSpawn = Random.Range(COLONIST_AMOUNT_MIN, COLONIST_AMOUNT_MAX);
-        Vector2 spawnPosition = GetSpawnAnchor();
 
-        List<Vector2> possiblePositions = GetPossibleSpawnPositions(spawnPosition, amountOfColonistsToSpawn);
+        SpawnInCluster<Colonist>(amountOfColonistsToSpawn);
+    }
+    private void SpawnInCluster<T>(int amount) where T : Entity
+    {
+        SpawnInCluster<T>(amount, GetSpawnAnchor());
+    }
+    private void SpawnInCluster<T>(int amount, Vector2 anchor) where T : Entity
+    {
+        List<Vector2> possiblePositions = GetPossibleSpawnPositions(anchor, amount);
 
-        for (int i = 0; i < amountOfColonistsToSpawn; i++)
+        for (int i = 0; i < amount; i++)
         {
             int index = Random.Range(0, possiblePositions.Count - 1);
 
-            CreateEntityAtPosition<Colonist>(possiblePositions[index]);
+            CreateEntityAtPosition<T>(possiblePositions[index]);
 
             possiblePositions.RemoveAt(index);
         }
