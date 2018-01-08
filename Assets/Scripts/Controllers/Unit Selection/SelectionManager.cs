@@ -69,7 +69,7 @@ public class SelectionManager : MonoBehaviour {
 
         for (int i = 0; i < unitsToMove.Count; i++)
         {
-            unitsToMove[i].AssignWork(new MoveWork(unitPositions.Dequeue()));
+            unitsToMove[i].AssignWork(new MovePointWork(unitPositions.Dequeue()));
         }
     }
     private void RenderUI(Rect rect)

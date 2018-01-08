@@ -26,7 +26,7 @@ public class WanderWork : Work {
 
         if (currentWork.IsDone())
         {
-            if(currentWork is MoveWork)
+            if(currentWork is MovePointWork)
             {
                 DoWait();        
             }
@@ -42,7 +42,7 @@ public class WanderWork : Work {
     }
     private void DoWalk()
     {
-        currentWork = new MoveWork(MoveWork.GetRandomPosition(anchor, WANDER_RADIUS));
+        currentWork = new MovePointWork(MovePointWork.GetRandomPosition(anchor, WANDER_RADIUS));
     }
     private void DoWait()
     {

@@ -36,4 +36,25 @@ public class Game : MonoBehaviour {
     {
         return MapData.Entities.Where(x => x is T).Select(x => x as T);
     }
+    public static List<T> GetEntitiesWithinRange<T>(Vector2 center, float radius) where T : Entity
+    {
+        Rect rect = new Rect(center - new Vector2(radius, radius), new Vector2(radius * 2, radius * 2));
+        List<Entity> entities = MapData.EntityQuadtree.Query(rect);
+        List<T> toReturn = new List<T>();
+
+        for (int i = 0; i < entities.Count; i++)
+        {
+            Entity entity = entities[i];
+
+            if(entity is T)
+            {
+                if(Vector2.Distance(entity.transform.position, center) <= radius)
+                {
+                    toReturn.Add(entity as T);
+                }
+            }
+        }
+
+        return toReturn;
+    }
 }

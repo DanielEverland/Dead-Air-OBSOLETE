@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MoveWork : Work
+public class MovePointWork : Work
 {
-    public MoveWork(Vector2 targetPosition)
+    public MovePointWork(Vector2 targetPosition)
     {
         this.targetPosition = targetPosition;
     }
