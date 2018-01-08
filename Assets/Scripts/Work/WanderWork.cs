@@ -10,35 +10,39 @@ public class WanderWork : Work {
     }
 
     private readonly Vector2 anchor;
-    
+
+    private IWork currentWork;
+
     private float WANDER_RADIUS = 5;
 
     public override void Update(WorkableEntity caller)
     {
-        if(caller.CurrentWork == null)
+        if(currentWork == null)
         {
-            DoWalk(caller);
+            DoWalk();
         }
 
-        if (caller.CurrentWork.IsDone(caller))
+        if (currentWork.IsDone(caller))
         {
-            if(caller.CurrentWork is MovePointWork)
+            if(currentWork is MovePointWork)
             {
-                DoWait(caller);        
+                DoWait();        
             }
             else
             {
-                DoWalk(caller);
+                DoWalk();
             }
         }
+
+        currentWork.Update(caller);
     }
-    private void DoWalk(WorkableEntity caller)
+    private void DoWalk()
     {
-        caller.AssignWork(new MovePointWork(MovePointWork.GetRandomPosition(anchor, WANDER_RADIUS)));
+        currentWork = new MovePointWork(MovePointWork.GetRandomPosition(anchor, WANDER_RADIUS));
     }
-    private void DoWait(WorkableEntity caller)
+    private void DoWait()
     {
-        caller.AssignWork(new Wait());
+        currentWork = new Wait();
     }
     public override bool IsDone(WorkableEntity caller)
     {
