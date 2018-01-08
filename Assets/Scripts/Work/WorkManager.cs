@@ -5,9 +5,10 @@ using UnityEngine;
 public class WorkManager {
 
     public static WorkManager PlayerWorkManager { get { return _playerWorkManager; } }
+    public static WorkManager ZombieWorkManager { get { return _zombieWorkManager; } }
 
     private static WorkManager _playerWorkManager = new WorkManager();
-
+    private static WorkManager _zombieWorkManager = new WorkManager();
 
     public bool HasWork { get { return QueuedWork.Count > 0; } }
 

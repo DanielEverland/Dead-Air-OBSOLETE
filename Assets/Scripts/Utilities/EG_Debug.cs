@@ -34,7 +34,8 @@ public static class EG_Debug {
                 corners[i],
                 corners[i + 1 < corners.Length ? i + 1 : 0],
                 color,
-                duration);
+                duration,
+                false);
         }
     }
 }

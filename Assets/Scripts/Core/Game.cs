@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,6 +14,7 @@ public class Game : MonoBehaviour {
         ChunkGenerator.Initialize,
         MapDataManager.Initialize,
         PlayerCamera.Center,
+        HordeManager.Initialize,
     };
 
     private void Start()
@@ -22,8 +24,10 @@ public class Game : MonoBehaviour {
     private void Update()
     {
         MapData.RefreshQuadtree();
-
         MapData.EntityQuadtree.Draw();
+
+        HordeManager.Update();
+        HordeManager.Draw();
     }
     private static void InitializeGame()
     {
@@ -31,5 +35,9 @@ public class Game : MonoBehaviour {
         {
             LoadFlow[i].Invoke();
         }
+    }
+    public static IEnumerable<T> GetEntitiesOfType<T>() where T : Entity
+    {
+        return MapData.Entities.Where(x => x is T).Select(x => x as T);
     }
 }
