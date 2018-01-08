@@ -21,7 +21,7 @@ public abstract class WorkableEntity : MovableEntity
     {
         if(currentWork != null)
         {
-            currentWork.Poll();
+            currentWork.Update(this);
         }
         else if(WorkManager.HasWork)
         {
@@ -41,9 +41,7 @@ public abstract class WorkableEntity : MovableEntity
         StopWorking();
 
         currentWork = work;
-
-        work.SetOwner(this);
-
+        
         OnStartedWork();
     }
     protected virtual void OnStartedWork() { }

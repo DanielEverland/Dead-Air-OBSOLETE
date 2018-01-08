@@ -11,11 +11,11 @@ public class MoveDirectionWork : Work, IHordeAbleWork
 
     private readonly Vector2 direction;
 
-    protected override void Update()
+    public override void Update(WorkableEntity caller)
     {
-        Owner.SetTargetPosition((Vector2)Owner.transform.position + direction);
+        caller.SetTargetPosition((Vector2)caller.transform.position + direction);
     }
-    public override bool IsDone()
+    public override bool IsDone(WorkableEntity caller)
     {
         return false;
     }

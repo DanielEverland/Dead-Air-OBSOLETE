@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public interface IWork {
-
-    void SetOwner(WorkableEntity owner);
-    void Poll();
-    bool IsDone();
+    
+    void Update(WorkableEntity caller);
+    bool IsDone(WorkableEntity caller);
 }

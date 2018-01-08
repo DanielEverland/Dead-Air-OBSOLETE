@@ -11,13 +11,13 @@ public class MovePointWork : Work
 
     private readonly Vector2 targetPosition;
 
-    protected override void Update()
+    public override void Update(WorkableEntity caller)
     {
-        Owner.SetTargetPosition(targetPosition);
+        caller.SetTargetPosition(targetPosition);
     }
-    public override bool IsDone()
+    public override bool IsDone(WorkableEntity caller)
     {
-        return (Vector2)Owner.transform.position == targetPosition;
+        return (Vector2)caller.transform.position == targetPosition;
     }
     public static Vector2 GetRandomPosition(Vector2 anchor, float radius)
     {

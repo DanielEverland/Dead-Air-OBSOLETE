@@ -10,47 +10,39 @@ public class WanderWork : Work {
     }
 
     private readonly Vector2 anchor;
-
-    private IWork currentWork;
-
+    
     private float WANDER_RADIUS = 5;
 
-    protected override void Update()
+    public override void Update(WorkableEntity caller)
     {
-        if(currentWork == null)
+        if(caller.CurrentWork == null)
         {
-            DoWalk();
-
-            currentWork.SetOwner(Owner);
+            DoWalk(caller);
         }
 
-        if (currentWork.IsDone())
+        if (caller.CurrentWork.IsDone(caller))
         {
-            if(currentWork is MovePointWork)
+            if(caller.CurrentWork is MovePointWork)
             {
-                DoWait();        
+                DoWait(caller);        
             }
             else
             {
-                DoWalk();
+                DoWalk(caller);
             }
-
-            currentWork.SetOwner(Owner);
         }
-
-        currentWork.Poll();
     }
-    private void DoWalk()
+    private void DoWalk(WorkableEntity caller)
     {
-        currentWork = new MovePointWork(MovePointWork.GetRandomPosition(anchor, WANDER_RADIUS));
+        caller.AssignWork(new MovePointWork(MovePointWork.GetRandomPosition(anchor, WANDER_RADIUS)));
     }
-    private void DoWait()
+    private void DoWait(WorkableEntity caller)
     {
-        currentWork = new Wait();
+        caller.AssignWork(new Wait());
     }
-    public override bool IsDone()
+    public override bool IsDone(WorkableEntity caller)
     {
-        return Owner.WorkManager.HasWork;
+        return caller.WorkManager.HasWork;
     }
 
     private class Wait : Work
@@ -67,11 +59,11 @@ public class WanderWork : Work {
 
         private float currentWaitTime;
 
-        public override bool IsDone()
+        public override bool IsDone(WorkableEntity caller)
         {
             return currentWaitTime >= waitTime;
         }
-        protected override void Update()
+        public override void Update(WorkableEntity caller)
         {
             currentWaitTime += Time.deltaTime;
         }
