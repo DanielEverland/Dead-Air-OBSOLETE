@@ -13,6 +13,7 @@ public class SelectionManager : MonoBehaviour {
     public IEnumerable<Entity> SelectedEntities { get { return selectedEntities.Keys; } }
 
     private Dictionary<Entity, SelectionHandler> selectedEntities = new Dictionary<Entity, SelectionHandler>();
+    private List<Entity> oldSelectedEntities;
     private Vector2 downPosition;
 
     private bool isDirty = false;
@@ -52,6 +53,13 @@ public class SelectionManager : MonoBehaviour {
     private void HandleInput(Rect rect)
     {
         List<Entity> entitiesSelectedThisFrame = MapData.EntityQuadtree.Query(rect);
+
+        if (entitiesSelectedThisFrame.Equals(oldSelectedEntities))
+            return;
+
+        oldSelectedEntities = entitiesSelectedThisFrame;
+
+        entitiesSelectedThisFrame = SanitizeEntities(entitiesSelectedThisFrame);
         List<Entity> newEntities = new List<Entity>(entitiesSelectedThisFrame.Except(selectedEntities.Keys));
         List<Entity> entitiesToRemove = new List<Entity>(selectedEntities.Keys.Except(entitiesSelectedThisFrame));
         
@@ -64,6 +72,30 @@ public class SelectionManager : MonoBehaviour {
         {
             AddEntity(entity);
         }
+    }
+    private List<Entity> SanitizeEntities(List<Entity> entities)
+    {
+        List<Entity> toReturn = new List<Entity>();
+
+        byte currentLevel = 0;
+
+        for (int i = 0; i < entities.Count; i++)
+        {
+            Entity currentEntity = entities[i];
+
+            if(currentEntity.Priority > currentLevel)
+            {
+                toReturn.Clear();
+                currentLevel = currentEntity.Priority;
+            }
+
+            if(currentEntity.Priority == currentLevel)
+            {
+                toReturn.Add(currentEntity);
+            }
+        }
+
+        return toReturn;
     }
     private void RightClick(Vector2 position)
     {

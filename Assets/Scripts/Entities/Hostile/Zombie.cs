@@ -4,9 +4,12 @@ using UnityEngine;
 
 public class Zombie : WorkableEntity
 {
+    public override string Name { get { return "Zombie"; } }
     public override string PrefabName { get { return "Zombie"; } }
     public override WorkManager WorkManager { get { return WorkManager.ZombieWorkManager; } }
-    
+
+    protected override EntityPriorityLevel PriorityLevel { get { return EntityPriorityLevel.Enemy; } }
+
     /// <summary>
     /// Time between receiving new work and communicating it to other zombies
     /// </summary>

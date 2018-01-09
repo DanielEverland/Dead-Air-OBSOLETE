@@ -5,9 +5,12 @@ using UnityEngine;
 
 public class Colonist : WorkableEntity {
 
+    public override string Name { get { return "Colonist"; } }
     public override string PrefabName { get { return "Colonist"; } }
 
     public override WorkManager WorkManager { get { return WorkManager.PlayerWorkManager; } }
+
+    protected override EntityPriorityLevel PriorityLevel { get { return EntityPriorityLevel.Colonist; } }
 
     protected new virtual void Update()
     {

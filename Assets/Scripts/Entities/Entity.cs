@@ -5,11 +5,16 @@ using UnityEngine;
 
 public abstract class Entity : MonoBehaviour {
     
-    private Dictionary<string, object> data;
+    public abstract string Name { get; }
 
+    public byte Priority { get { return (byte)PriorityLevel; } }
     public Rect Rect { get { return new Rect(transform.position - (Vector3)Size / 2, Size); } }
-
+    
     public virtual Vector2 Size { get { return Vector2.one; } }
+
+    protected abstract EntityPriorityLevel PriorityLevel { get; }
+
+    private Dictionary<string, object> data;
 
     public static T CreateEntity<T>() where T : Entity
     {
