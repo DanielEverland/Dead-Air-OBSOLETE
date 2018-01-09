@@ -9,6 +9,20 @@ public static class Utility {
     public const int CONTEXT_MENU_ORDER = 100;
 
     /// <summary>
+    /// Converts radian to a vector
+    /// </summary>
+    public static Vector2 RadianToVector2(float radian)
+    {
+        return new Vector2(Mathf.Cos(radian), Mathf.Sin(radian));
+    }
+    /// <summary>
+    /// Converts degrees to a vector
+    /// </summary>
+    public static Vector2 DegreesToVector2(float degree)
+    {
+        return RadianToVector2(degree * Mathf.Deg2Rad);
+    }
+    /// <summary>
     /// Checks whether <paramref name="a"/> and <paramref name="b"/> intersect
     /// </summary>
     public static bool Intersects(Rect a, Rect b)

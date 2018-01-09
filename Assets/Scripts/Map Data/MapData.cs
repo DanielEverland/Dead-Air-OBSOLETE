@@ -54,12 +54,12 @@ public class MapData {
     /// <summary>
     /// Minimum amount of hordes per map
     /// </summary>
-    private const int HORDES_AMOUNT_PRE_MAP_MIN = 2;
+    private const int HORDES_AMOUNT_PER_MAP_MIN = 2;
 
     /// <summary>
     /// Maximum amount of hordes per map
     /// </summary>
-    private const int HORDES_AMOUNT_PRE_MAP_MAX = 5;
+    private const int HORDES_AMOUNT_PER_MAP_MAX = 5;
 
     /// <summary>
     /// How closely should colonists be placed? 1 leaves no extra space, 2 will leave as much space as there are colonists and so forth.
@@ -134,13 +134,17 @@ public class MapData {
     }
     private void CreateZombies()
     {
-        int amountOfHordesToSpawn = Random.Range(HORDES_AMOUNT_PRE_MAP_MIN, HORDES_AMOUNT_PRE_MAP_MAX);
+        int amountOfHordesToSpawn = Random.Range(HORDES_AMOUNT_PER_MAP_MIN, HORDES_AMOUNT_PER_MAP_MAX);
 
         for (int i = 0; i < amountOfHordesToSpawn; i++)
         {
             int amountOfZombiesToSpawn = Random.Range(HORDES_ZOMBIE_AMOUNT_MIN, HORDES_ZOMBIE_AMOUNT_MAX);
 
-            SpawnInCluster<Zombie>(amountOfZombiesToSpawn);
+            List<Zombie> horde = SpawnInCluster<Zombie>(amountOfZombiesToSpawn);
+
+            #region debug. remove me
+            horde[0].AssignWork(new MoveDirectionWork(Utility.DegreesToVector2(Random.Range(0, 360))));
+            #endregion
         }        
     }
     private void CreateColonists()
@@ -149,22 +153,25 @@ public class MapData {
 
         SpawnInCluster<Colonist>(amountOfColonistsToSpawn);
     }
-    private void SpawnInCluster<T>(int amount) where T : Entity
+    private List<T> SpawnInCluster<T>(int amount) where T : Entity
     {
-        SpawnInCluster<T>(amount, GetSpawnAnchor());
+        return SpawnInCluster<T>(amount, GetSpawnAnchor());
     }
-    private void SpawnInCluster<T>(int amount, Vector2 anchor) where T : Entity
+    private List<T> SpawnInCluster<T>(int amount, Vector2 anchor) where T : Entity
     {
         List<Vector2> possiblePositions = GetPossibleSpawnPositions(anchor, amount);
+        List<T> toReturn = new List<T>();
 
         for (int i = 0; i < amount; i++)
         {
             int index = Random.Range(0, possiblePositions.Count - 1);
 
-            CreateEntityAtPosition<T>(possiblePositions[index]);
+            toReturn.Add(CreateEntityAtPosition<T>(possiblePositions[index]) as T);
 
             possiblePositions.RemoveAt(index);
         }
+
+        return toReturn;
     }
     private Vector2 GetSpawnAnchor()
     {
@@ -218,11 +225,13 @@ public class MapData {
             }
         }
     }
-    private void CreateEntityAtPosition<T>(Vector2 position) where T : Entity
+    private Entity CreateEntityAtPosition<T>(Vector2 position) where T : Entity
     {
         Entity entity = MapData.CreateEntity<T>();
 
         entity.transform.position = position;
+
+        return entity;
     }
     private void CreateChunks()
     {

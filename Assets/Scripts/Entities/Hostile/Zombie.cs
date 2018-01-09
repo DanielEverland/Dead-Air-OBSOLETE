@@ -10,7 +10,7 @@ public class Zombie : WorkableEntity
     /// <summary>
     /// Time between receiving new work and communicating it to other zombies
     /// </summary>
-    private float COMMUNICATION_DELAY = 0.5f;
+    private float COMMUNICATION_DELAY = 0.3f;
 
     /// <summary>
     /// Range in meters that zombies can communicate with each other
