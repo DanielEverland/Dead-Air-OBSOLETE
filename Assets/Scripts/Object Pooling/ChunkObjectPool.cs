@@ -11,6 +11,8 @@ public class ChunkObjectPool : MonoBehaviour {
     private static Queue<MeshFilter> objects = new Queue<MeshFilter>();
     private static HashSet<int> temporaryObjects = new HashSet<int>();
 
+    private static Transform RootTransform { get { return World.Terrain.transform; } }
+
     private void Awake()
     {
         transform = gameObject.transform;
@@ -44,7 +46,7 @@ public class ChunkObjectPool : MonoBehaviour {
             filter.gameObject.name = "Temp";
         }
 
-        filter.transform.SetParent(null);
+        filter.transform.SetParent(RootTransform);
         filter.gameObject.SetActive(true);
 
         return filter;

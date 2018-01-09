@@ -6,6 +6,14 @@ public class PrefabPool : GenericObjectPoolBehaviour {
 
     private static GenericObjectPoolBehaviour instance;
 
+    protected override Transform RootTransform
+    {
+        get
+        {
+            return World.Objects.transform;
+        }
+    }
+
     protected override void Awake()
     {
         base.Awake();
@@ -20,7 +28,7 @@ public class PrefabPool : GenericObjectPoolBehaviour {
     {
         return (T)instance.GetObject(key);
     }
-    public static void ReturnObject(GameObject obj)
+    public new static void ReturnObject(GameObject obj)
     {
         instance.ReturnObject(obj);
     }

@@ -78,6 +78,7 @@ public class MapData {
     public static Entity CreateEntity<T>() where T : Entity
     {
         Entity entity = Entity.CreateEntity<T>();
+        entity.transform.SetParent(World.Entities.transform);
 
         AddEntity(entity);
 

@@ -12,6 +12,8 @@ public class GenericObjectPoolBehaviour : MonoBehaviour {
     private Dictionary<string, Object> originalObjects;
     private Dictionary<int, string> objectKeys;
 
+    protected virtual Transform RootTransform { get { return null; } }
+
     protected virtual void Awake()
     {
         pool = new Dictionary<string, Queue<Object>>();
@@ -29,7 +31,7 @@ public class GenericObjectPoolBehaviour : MonoBehaviour {
             CreateObjects(references.GetReference(i));
         }
     }
-    private void CreateObjects(GenericObjectPoolObject.ObjectReference reference)
+    protected virtual void CreateObjects(GenericObjectPoolObject.ObjectReference reference)
     {
         if (pool.ContainsKey(reference.Key))
         {
@@ -45,33 +47,47 @@ public class GenericObjectPoolBehaviour : MonoBehaviour {
             pool[reference.Key].Enqueue(CreateObject(reference.Object));
         }
     }
-    private Object CreateObject(Object prefab)
+    protected virtual Object CreateObject(Object prefab)
     {
         Object toReturn = Instantiate(prefab);
-
+        
         if(toReturn is GameObject)
         {
             ReturnObject(toReturn as GameObject);
         }
+        else if(toReturn is MonoBehaviour)
+        {
+            MonoBehaviour script = toReturn as MonoBehaviour;
+
+            ReturnObject(script.gameObject);
+        }
 
         return toReturn;
     }
-    private void ReleaseObject(Object obj)
+    protected virtual void ReleaseObject(Object obj)
     {
         if(obj is GameObject)
         {
-            GameObject gameObj = obj as GameObject;
+            ReleaseGameObject(obj as GameObject);
+        }
+        else if (obj is MonoBehaviour)
+        {
+            MonoBehaviour script = obj as MonoBehaviour;
 
-            gameObj.transform.SetParent(null);
-            gameObj.SetActive(true);
+            ReleaseGameObject(script.gameObject);
         }
     }
-    private void ReturnObject(GameObject obj)
+    protected virtual void ReleaseGameObject(GameObject obj)
+    {
+        obj.transform.SetParent(RootTransform);
+        obj.SetActive(true);
+    }
+    protected virtual void ReturnObject(GameObject obj)
     {
         obj.SetActive(false);
         obj.transform.SetParent(transform);
     }
-    public Object GetObject(string key)
+    public virtual Object GetObject(string key)
     {
         if(pool[key].Count > 0)
         {
@@ -87,7 +103,7 @@ public class GenericObjectPoolBehaviour : MonoBehaviour {
             return Instantiate(originalObjects[key]);
         }
     }
-    public void ReturnObject(Object obj)
+    public virtual void ReturnObject(Object obj)
     {
         int instanceID = obj.GetInstanceID();
 
@@ -100,7 +116,13 @@ public class GenericObjectPoolBehaviour : MonoBehaviour {
             {
                 ReturnObject((GameObject)obj);
             }
-            
+            else if (obj is MonoBehaviour)
+            {
+                MonoBehaviour script = obj as MonoBehaviour;
+
+                ReturnObject(script.gameObject);
+            }
+
             pool[key].Enqueue(obj);
         }
         else

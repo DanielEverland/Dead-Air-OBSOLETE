@@ -32,6 +32,10 @@ public class Game : MonoBehaviour {
             LoadFlow[i].Invoke();
         }
     }
+    public static Entity CreateEntity<T>() where T : Entity
+    {
+        return MapData.CreateEntity<T>();
+    }
     public static IEnumerable<T> GetEntitiesOfType<T>() where T : Entity
     {
         return MapData.Entities.Where(x => x is T).Select(x => x as T);
