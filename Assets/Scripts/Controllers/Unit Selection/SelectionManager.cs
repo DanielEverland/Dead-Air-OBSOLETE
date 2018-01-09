@@ -9,8 +9,13 @@ public class SelectionManager : MonoBehaviour {
     [SerializeField]
     private RectTransform image;
 
+    public event System.Action OnSelectionUpdated;
+    public IEnumerable<Entity> SelectedEntities { get { return selectedEntities.Keys; } }
+
     private Dictionary<Entity, SelectionHandler> selectedEntities = new Dictionary<Entity, SelectionHandler>();
     private Vector2 downPosition;
+
+    private bool isDirty = false;
 
 	private void Update()
     {
@@ -41,6 +46,8 @@ public class SelectionManager : MonoBehaviour {
         {
             RenderUI(Rect.zero);
         }
+        
+        PollEvents();
     }
     private void HandleInput(Rect rect)
     {
@@ -87,12 +94,16 @@ public class SelectionManager : MonoBehaviour {
             return;
 
         selectedEntities.Add(entity, new SelectionHandler(entity));
+
+        SelectionUpdated();
     }
     private void RemoveEntity(Entity entity)
     {
         selectedEntities[entity].Remove();
 
         selectedEntities.Remove(entity);
+
+        SelectionUpdated();
     }
     private void Clear()
     {
@@ -102,6 +113,24 @@ public class SelectionManager : MonoBehaviour {
         }
 
         selectedEntities.Clear();
+
+        SelectionUpdated();
+    }
+    private void SelectionUpdated()
+    {
+        isDirty = true;
+    }
+    private void PollEvents()
+    {
+        if (isDirty)
+            RaiseEvent(OnSelectionUpdated);
+
+        isDirty = false;
+    }
+    private void RaiseEvent(System.Action action)
+    {
+        if (action != null)
+            action.Invoke();
     }
 
     private class SelectionHandler
