@@ -92,9 +92,14 @@ public class EntityCardManager : MonoBehaviour {
 
     private Dictionary<System.Type, Action<EntityCard.Data, object>> dataParsers = new Dictionary<Type, Action<EntityCard.Data, object>>()
     {
+        { typeof(object), ObjectParser },
         { typeof(Entity), EntityParser },
     };
 
+    private static void ObjectParser(EntityCard.Data data, object obj)
+    {
+        data.EntityCount++;
+    }
     private static void EntityParser(EntityCard.Data data, object obj)
     {
         Entity entity = obj as Entity;

@@ -18,7 +18,14 @@ public class EntityCard : MonoBehaviour {
         }
     }
 
-	public class Data
+    public enum DataTypes
+    {
+        None = 0,
+
+        Name,
+        EntityCount,
+    }
+    public class Data
     {
         private Data() { }
 
@@ -41,6 +48,18 @@ public class EntityCard : MonoBehaviour {
             set
             {
                 SetData(DataTypes.Name, value);
+            }
+        }
+
+        public int EntityCount
+        {
+            get
+            {
+                return GetData<int>(DataTypes.EntityCount);
+            }
+            set
+            {
+                SetData(DataTypes.EntityCount, value);
             }
         }
 
@@ -76,11 +95,5 @@ public class EntityCard : MonoBehaviour {
 
             return default(T);
         }
-    }
-    public enum DataTypes
-    {
-        None = 0,
-
-        Name,
     }
 }
