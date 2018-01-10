@@ -104,6 +104,6 @@ public class EntityCardManager : MonoBehaviour {
     {
         Entity entity = obj as Entity;
 
-        data.Name = (data.Name == entity.Name || data.Name == default(string)) ? entity.Name : "Various";
+        data.Name = (data.Name == entity.Name || !data.HasData(EntityCard.DataTypes.Name)) ? entity.Name : "Various";
     }
 }
