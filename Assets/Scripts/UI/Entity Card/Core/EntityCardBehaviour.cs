@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public abstract class EntityCardBehaviour : MonoBehaviour {
 
@@ -8,6 +9,8 @@ public abstract class EntityCardBehaviour : MonoBehaviour {
     private EntityCard.DataTypes _dataType;
     [SerializeField]
     private bool _disableIfEmpty = true;
+    [SerializeField]
+    private OnReceivedDataEvent OnReceviedData;
 
     public EntityCard.DataTypes DataType { get { return _dataType; } }
 
@@ -25,13 +28,18 @@ public abstract class EntityCardBehaviour : MonoBehaviour {
         {
             Disable();
         }
+
+        if (OnReceviedData != null)
+            OnReceviedData.Invoke(data);
     }
-    private void Enable()
+    public void Enable()
     {
         gameObject.SetActive(true);
     }
-    private void Disable()
+    public void Disable()
     {
         gameObject.SetActive(false);
     }
+    [System.Serializable]
+    private class OnReceivedDataEvent : UnityEvent<EntityCard.Data> { }
 }

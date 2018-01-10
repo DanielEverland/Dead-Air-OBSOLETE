@@ -8,17 +8,19 @@ using TMPro;
 [RequireComponent(typeof(TMP_Text))]
 public class EntityCardLabel : EntityCardBehaviour {
 
+    public string Text { get { return textElement.text; } set { textElement.text = value; } }
+
     [SerializeField]
-    private TMP_Text text;
+    private TMP_Text textElement;
     [SerializeField]
     private string format = "{0}";
 
     protected override void InitializeData(EntityCard.Data data)
     {
-        text.text = string.Format(format, data.GetData<object>(DataType).ToString());
+        textElement.text = string.Format(format, data.GetData<object>(DataType).ToString());
     }
     private void OnValidate()
     {
-        text = GetComponent<TMP_Text>();
+        textElement = GetComponent<TMP_Text>();
     }
 }
