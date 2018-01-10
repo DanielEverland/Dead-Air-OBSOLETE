@@ -3,12 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
-[RequireComponent(typeof(Text))]
+[RequireComponent(typeof(TMP_Text))]
 public class EntityCardLabel : EntityCardBehaviour {
 
     [SerializeField]
-    private Text text;
+    private TMP_Text text;
     [SerializeField]
     private string format = "{0}";
 
@@ -18,6 +19,6 @@ public class EntityCardLabel : EntityCardBehaviour {
     }
     private void OnValidate()
     {
-        text = GetComponent<Text>();
+        text = GetComponent<TMP_Text>();
     }
 }
