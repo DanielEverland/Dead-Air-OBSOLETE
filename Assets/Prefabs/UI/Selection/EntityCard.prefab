@@ -107,6 +107,7 @@ GameObject:
   - component: {fileID: 114618573095925134}
   - component: {fileID: 114993970932593848}
   - component: {fileID: 114160754209381880}
+  - component: {fileID: 114339506043405746}
   m_Layer: 5
   m_Name: Count
   m_TagString: Untagged
@@ -201,6 +202,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e746b424d9c0064e819f59519012b5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114339506043405746
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1937188758210060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22e0ac4c5034e684182edf14b166c3de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TargetData: 2
+  TriggerValue: 2
+  TriggerCondition: 2
+  DisableOnTrigger: 1
 --- !u!114 &114493900087873250
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -434,7 +450,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _dataType: 1
   _disableIfEmpty: 1
-  text: {fileID: 114954839409991470}
+  OnReceviedData:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: EntityCardBehaviour+OnReceivedDataEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  textElement: {fileID: 114954839409991470}
   format: '{0}'
 --- !u!114 &114919670512005758
 MonoBehaviour:
@@ -574,7 +595,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _dataType: 2
   _disableIfEmpty: 1
-  text: {fileID: 114618573095925134}
+  OnReceviedData:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114339506043405746}
+        m_MethodName: OnReceviedData
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: EntityCardBehaviour+OnReceivedDataEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  textElement: {fileID: 114618573095925134}
   format: ({0})
 --- !u!222 &222057460941328106
 CanvasRenderer:

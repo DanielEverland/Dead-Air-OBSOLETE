@@ -63,7 +63,21 @@ public class EntityCard : MonoBehaviour {
             }
         }
 
+        public bool CanCast<T>(DataTypes dataType)
+        {
+            object result = null;
 
+            try
+            {
+                result = System.Convert.ChangeType(GetData<object>(dataType), typeof(T));
+            }
+            catch
+            {
+
+            }
+
+            return result != null;
+        }
         public bool HasData(DataTypes dataType)
         {
             return data.ContainsKey(dataType);
@@ -85,7 +99,7 @@ public class EntityCard : MonoBehaviour {
             {
                 try
                 {
-                    return (T)data[dataType];
+                    return (T)System.Convert.ChangeType(data[dataType], typeof(T));
                 }
                 catch(System.InvalidCastException)
                 {
