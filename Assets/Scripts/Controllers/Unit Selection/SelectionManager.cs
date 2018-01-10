@@ -9,7 +9,7 @@ public class SelectionManager : MonoBehaviour {
     [SerializeField]
     private RectTransform image;
 
-    public event System.Action OnSelectionUpdated;
+    public event System.Action<IEnumerable<Entity>> OnSelectionUpdated;
     public IEnumerable<Entity> SelectedEntities { get { return selectedEntities.Keys; } }
 
     private Dictionary<Entity, SelectionHandler> selectedEntities = new Dictionary<Entity, SelectionHandler>();
@@ -155,14 +155,13 @@ public class SelectionManager : MonoBehaviour {
     private void PollEvents()
     {
         if (isDirty)
-            RaiseEvent(OnSelectionUpdated);
+        {
+            if (OnSelectionUpdated != null)
+                OnSelectionUpdated.Invoke(SelectedEntities);
+        }
+            
 
         isDirty = false;
-    }
-    private void RaiseEvent(System.Action action)
-    {
-        if (action != null)
-            action.Invoke();
     }
 
     private class SelectionHandler

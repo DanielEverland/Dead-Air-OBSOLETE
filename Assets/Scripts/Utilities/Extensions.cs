@@ -4,7 +4,38 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public static class Extensions {
+    
+    public static List<System.Type> GetDerivedTypesOrdered(this System.Type type)
+    {
+        List<System.Type> unordered = GetDerivedTypes(type);
+        System.Func<System.Type, int> test = x =>
+        {
+            int toReturn = 0;
 
+            for (int i = 0; i < unordered.Count; i++)
+            {
+                if (unordered[i].IsAssignableFrom(x))
+                {
+                    toReturn++;
+                }
+            }
+
+            return toReturn;
+        };
+
+        return GetDerivedTypes(type).OrderBy(test).ToList();
+    }
+    public static List<System.Type> GetDerivedTypes(this object obj)
+    {
+        return obj.GetType().GetDerivedTypes();
+    }
+    public static List<System.Type> GetDerivedTypes(this System.Type type)
+    {
+        return (from domainAssembly in System.AppDomain.CurrentDomain.GetAssemblies()
+                from assemblyType in domainAssembly.GetTypes()
+                where type.IsSubclassOf(assemblyType)
+                select assemblyType).ToList();
+    }
     public static Vector2 ToCellPosition(this Vector3 position)
     {
         return new Vector2()
