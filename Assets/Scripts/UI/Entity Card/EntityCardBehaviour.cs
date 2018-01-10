@@ -6,6 +6,8 @@ public abstract class EntityCardBehaviour : MonoBehaviour {
 
     [SerializeField]
     private EntityCard.DataTypes _dataType;
+    [SerializeField]
+    private bool _disableIfEmpty = true;
 
     public EntityCard.DataTypes DataType { get { return _dataType; } }
 
@@ -19,7 +21,7 @@ public abstract class EntityCardBehaviour : MonoBehaviour {
 
             InitializeData(data);
         }
-        else
+        else if(_disableIfEmpty)
         {
             Disable();
         }
