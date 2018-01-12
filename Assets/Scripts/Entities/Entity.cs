@@ -4,9 +4,30 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class Entity : MonoBehaviour {
-    
+
+    [SerializeField]
+    private ushort _maxHealth;
+
     public abstract string Name { get; }
 
+    public float Health
+    {
+        get
+        {
+            return Mathf.Clamp(MaxHealth - healthOffset, 0, float.MaxValue);
+        }
+        set
+        {
+            healthOffset = Mathf.Clamp(MaxHealth - value, 0, MaxHealth);
+
+            if(healthOffset == MaxHealth)
+            {
+                Die();
+            }
+        }
+    }
+
+    public int MaxHealth { get { return (int)_maxHealth; } }
     public byte Priority { get { return (byte)PriorityLevel; } }
     public Rect Rect { get { return new Rect(transform.position - (Vector3)Size / 2, Size); } }
     
@@ -15,6 +36,8 @@ public abstract class Entity : MonoBehaviour {
     protected abstract EntityPriorityLevel PriorityLevel { get; }
 
     private Dictionary<string, object> data;
+    private float healthOffset;
+    private bool isDead;
 
     public static T CreateEntity<T>() where T : Entity
     {
@@ -65,6 +88,16 @@ public abstract class Entity : MonoBehaviour {
     {
         return data[key];
     }
+    private void Die()
+    {
+        if (isDead)
+            return;
+
+        isDead = true;
+
+        OnDead();
+    }
+    protected virtual void OnDead() { }
 
     public abstract string PrefabName { get; }
 }
