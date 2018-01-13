@@ -47,10 +47,10 @@ public class EntityCardTwoValueSlider : MonoBehaviour, IEntityCardBehaviour
 
             _bottomSlider.fillAmount = MaxValue / relative;
             _topSlider.fillAmount = MinValue / relative;
-
+            
             if (_textElement != null)
             {
-                if (MinValue == MaxValue)
+                if (MinValue == relative)
                 {
                     _textElement.text = string.Format("{0}", relative);
                 }
