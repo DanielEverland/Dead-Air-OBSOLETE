@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class EntityCard : MonoBehaviour {
 
-    private List<EntityCardBehaviour> elements;
+    private List<IEntityCardBehaviour> elements;
 
     private void Awake()
     {
-        elements = new List<EntityCardBehaviour>(gameObject.GetComponentsInChildren<EntityCardBehaviour>());
+        elements = new List<IEntityCardBehaviour>(GetComponentsInChildren<IEntityCardBehaviour>());
     }
     public void Initialize(Data data)
     {
-        foreach (EntityCardBehaviour behaviour in elements)
+        foreach (IEntityCardBehaviour behaviour in elements)
         {
             behaviour.Initialize(data);
         }
@@ -22,8 +22,12 @@ public class EntityCard : MonoBehaviour {
     {
         None = 0,
 
-        Name,
-        EntityCount,
+        Name = 2,
+        EntityCount = 4,
+        MaxCurrentHealth = 8,
+        MinCurrentHealth = 16,
+        MaxMaxHealth = 32,
+        MinMaxHealth = 64,
     }
     public class Data
     {
@@ -32,6 +36,8 @@ public class EntityCard : MonoBehaviour {
         public Data(IEnumerable<Entity> selectedEntities)
         {
             this.selectedEntities = new List<Entity>(selectedEntities);
+
+            //Initialize default values if needed
         }
 
         public IEnumerable<Entity> SelectedEntities { get { return selectedEntities; } }
@@ -39,6 +45,50 @@ public class EntityCard : MonoBehaviour {
 
         private Dictionary<DataTypes, object> data = new Dictionary<DataTypes, object>();
 
+        public int MaxMaxHealth
+        {
+            get
+            {
+                return GetData<int>(DataTypes.MaxMaxHealth);
+            }
+            set
+            {
+                SetData(DataTypes.MaxMaxHealth, value);
+            }
+        }
+        public int MinMaxHealth
+        {
+            get
+            {
+                return GetData<int>(DataTypes.MinMaxHealth);
+            }
+            set
+            {
+                SetData(DataTypes.MinMaxHealth, value);
+            }
+        }
+        public int MaxCurrentHealth
+        {
+            get
+            {
+                return GetData<int>(DataTypes.MaxCurrentHealth);
+            }
+            set
+            {
+                SetData(DataTypes.MaxCurrentHealth, value);
+            }
+        }
+        public int MinCurrentHealth
+        {
+            get
+            {
+                return GetData<int>(DataTypes.MinCurrentHealth);
+            }
+            set
+            {
+                SetData(DataTypes.MinCurrentHealth, value);
+            }
+        }
         public string Name
         {
             get

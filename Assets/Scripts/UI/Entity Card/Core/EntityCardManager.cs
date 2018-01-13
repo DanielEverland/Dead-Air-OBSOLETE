@@ -105,5 +105,11 @@ public class EntityCardManager : MonoBehaviour {
         Entity entity = obj as Entity;
 
         data.Name = (data.Name == entity.Name || !data.HasData(EntityCard.DataTypes.Name)) ? entity.Name : "Various";
+
+        data.MinCurrentHealth = (data.MinCurrentHealth > entity.Health || !data.HasData(EntityCard.DataTypes.MinCurrentHealth)) ? (int)entity.Health : data.MinCurrentHealth;
+        data.MaxCurrentHealth = (data.MaxCurrentHealth < entity.Health || !data.HasData(EntityCard.DataTypes.MaxCurrentHealth)) ? (int)entity.Health : data.MaxCurrentHealth;
+
+        data.MinMaxHealth = (data.MinMaxHealth > entity.MaxHealth || !data.HasData(EntityCard.DataTypes.MinMaxHealth)) ? entity.MaxHealth : data.MinMaxHealth;
+        data.MaxMaxHealth = (data.MaxMaxHealth < entity.MaxHealth || !data.HasData(EntityCard.DataTypes.MaxMaxHealth)) ? entity.MaxHealth : data.MaxMaxHealth;
     }
 }

@@ -125,6 +125,8 @@ public class SelectionManager : MonoBehaviour {
         if (selectedEntities.ContainsKey(entity))
             return;
 
+        entity.Health -= 10;
+
         selectedEntities.Add(entity, new SelectionHandler(entity));
 
         SelectionUpdated();

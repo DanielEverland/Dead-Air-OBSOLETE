@@ -6,7 +6,7 @@ using UnityEngine;
 public abstract class Entity : MonoBehaviour {
 
     [SerializeField]
-    private ushort _maxHealth;
+    private ushort _maxHealth = 100;
 
     public abstract string Name { get; }
 

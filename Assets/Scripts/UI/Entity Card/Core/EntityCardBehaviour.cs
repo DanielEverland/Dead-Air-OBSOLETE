@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public abstract class EntityCardBehaviour : MonoBehaviour {
+public abstract class EntityCardBehaviour : MonoBehaviour, IEntityCardBehaviour {
 
     [SerializeField]
     private EntityCard.DataTypes _dataType;
