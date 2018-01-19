@@ -2,17 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class MovableEntity : Entity, ISeeingEntity {
+public abstract class MovableEntity : SeeingEntity {
 
     [SerializeField]
     private float _speed = 1;
-    [SerializeField]
-    private float _seeingRange = 5;
-
-    public float SightRange { get { return _seeingRange; } }
 
     private Vector2? targetPosition;
-
+        
     public void SetTargetPosition(Vector2 position)
     {
         if (targetPosition == position)

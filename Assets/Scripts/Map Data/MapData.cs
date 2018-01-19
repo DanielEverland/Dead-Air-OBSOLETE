@@ -22,7 +22,6 @@ public class MapData {
     public static IDictionary<Vector2, Chunk> Chunks { get { return instance._chunks; } }
 
     public static Quadtree<Entity> EntityQuadtree { get { return instance._entityQuadtree; } }
-    public static RadialSpatialHash<Entity> EntityCommunicationHash { get { return instance._entityCommunicationHash; } }
 
     private Dictionary<Vector2, Chunk> _chunks;
     private List<Entity> _entities;
@@ -74,17 +73,21 @@ public class MapData {
     /// </summary>
     private const float COLONIST_DENSITY = 5;
     
+    public static List<Entity> GetAllVisibleEntities(Vector2 center, float radius)
+    {
+        return instance._entityCommunicationHash.Get(center, radius);
+    }
     private static void PollForDataInsertion(Entity entity)
     {
         //Quadtree
         instance._entityQuadtree.Insert(entity.Rect, entity);
 
         //Communication Spatial Hash
-        if(entity is ISeeingEntity)
+        if(entity is IVisibleEntity)
         {
-            ISeeingEntity communicableEntity = entity as ISeeingEntity;
+            IVisibleEntity communicableEntity = entity as IVisibleEntity;
 
-            instance._entityCommunicationHash.Insert(entity, entity.transform.position, communicableEntity.SightRange);
+            instance._entityCommunicationHash.Insert(entity, entity.transform.position, communicableEntity.SizeRadius);
         }
     }
     public static void Update()

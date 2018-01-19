@@ -96,7 +96,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _maxHealth: 100
-  speed: 2
+  _sizeRadius: 1
+  _seeingRange: 5
+  _speed: 1
 --- !u!135 &135711287161166642
 SphereCollider:
   m_ObjectHideFlags: 1

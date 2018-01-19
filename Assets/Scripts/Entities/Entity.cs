@@ -39,6 +39,10 @@ public abstract class Entity : MonoBehaviour {
     private float healthOffset;
     private bool isDead;
 
+    protected virtual void Awake()
+    {
+
+    }
     public static T CreateEntity<T>() where T : Entity
     {
         return CreateEntity<T>(typeof(T).Name);
@@ -97,7 +101,11 @@ public abstract class Entity : MonoBehaviour {
 
         OnDead();
     }
-    protected virtual void OnDead() { }
+    protected virtual void OnDead()
+    {
+        GameObject.Destroy(gameObject);
+    }
+    protected virtual void OnDestroy() {  }
 
     public abstract string PrefabName { get; }
 }

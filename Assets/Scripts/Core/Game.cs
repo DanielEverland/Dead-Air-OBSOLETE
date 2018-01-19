@@ -24,6 +24,7 @@ public class Game : MonoBehaviour {
     private void Update()
     {
         MapData.Update();
+        VisionManager.Update();
     }
     private static void InitializeGame()
     {
@@ -39,6 +40,26 @@ public class Game : MonoBehaviour {
     public static IEnumerable<T> GetEntitiesOfType<T>() where T : Entity
     {
         return MapData.Entities.Where(x => x is T).Select(x => x as T);
+    }
+    public static List<T> GetVisibleEntitiesWithinRange<T>(Vector2 center, float radius) where T : Entity
+    {
+        List<Entity> entities = MapData.GetAllVisibleEntities(center, radius);
+        List<T> toReturn = new List<T>();
+
+        for (int i = 0; i < entities.Count; i++)
+        {
+            Entity entity = entities[i];
+
+            if (entity is T)
+            {
+                if (Vector2.Distance(entity.transform.position, center) <= radius)
+                {
+                    toReturn.Add(entity as T);
+                }
+            }
+        }
+        
+        return toReturn;
     }
     public static List<T> GetEntitiesWithinRange<T>(Vector2 center, float radius) where T : Entity
     {
