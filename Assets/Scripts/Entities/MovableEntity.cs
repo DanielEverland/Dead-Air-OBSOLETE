@@ -2,10 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class MovableEntity : Entity {
+public abstract class MovableEntity : Entity, ICommunicableEntity {
 
     [SerializeField]
-    private float speed;
+    private float speed = 1;
+    [SerializeField]
+    private float hearingRange = 5;
+
+    public float HearingRange { get { return hearingRange; } }
 
     private Vector2? targetPosition;
 

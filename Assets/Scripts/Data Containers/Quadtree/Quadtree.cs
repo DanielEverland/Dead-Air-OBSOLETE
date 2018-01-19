@@ -24,7 +24,7 @@ public class Quadtree<T> {
 
     public void Insert(Rect rect, T obj)
     {
-        root.Insert(new NodeObject<T>(rect, obj));
+        root.Insert(new DataEntry<T, Rect>(obj, rect));
 
         _count++;
     }

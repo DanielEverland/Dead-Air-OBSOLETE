@@ -9,14 +9,14 @@ public class QuadtreeNode<T> {
     public QuadtreeNode(Rect rect, int maxObjectCount = DEFAULT_MAX_OBJECT_COUNT)
     {
         _rect = rect;
-        _objects = new List<NodeObject<T>>(maxObjectCount);
+        _objects = new List<DataEntry<T, Rect>>(maxObjectCount);
         _maxObjects = maxObjectCount;
     }
 
     public const int DEFAULT_MAX_OBJECT_COUNT = 3;
 
     private readonly Rect _rect;
-    private readonly List<NodeObject<T>> _objects;
+    private readonly List<DataEntry<T, Rect>> _objects;
     private readonly int _maxObjects;
 
     private bool HasChildNodes { get { return _childNodes != null; } }
@@ -30,24 +30,24 @@ public class QuadtreeNode<T> {
     private readonly Color DRAW_ACTIVITY_COLOR = Color.cyan;
     private readonly Color DRAW_OBJECT_COLOR = Color.white;
 
-    public void Insert(NodeObject<T> obj)
+    public void Insert(DataEntry<T, Rect> entry)
     {
         PollActivity();
 
         if (HasChildNodes)
         {
-            if (_childNodes.Fits(obj))
+            if (_childNodes.Fits(entry))
             {
-                _childNodes.Insert(obj);
+                _childNodes.Insert(entry);
             }
             else
             {
-                Add(obj);
+                Add(entry);
             }
         }
         else
         {
-            Add(obj);
+            Add(entry);
         }
     }
     private void PollSplit()
@@ -63,33 +63,33 @@ public class QuadtreeNode<T> {
     private void DoSplit()
     {
         _childNodes = new ChildNodes<T>(this);
-        List<NodeObject<T>> tempObjectList = new List<NodeObject<T>>(_objects);
+        List<DataEntry<T, Rect>> tempEntryList = new List<DataEntry<T, Rect>>(_objects);
         _objects.Clear();
 
-        for (int i = 0; i < tempObjectList.Count; i++)
+        for (int i = 0; i < tempEntryList.Count; i++)
         {
-            if (_childNodes.Fits(tempObjectList[i]))
+            if (_childNodes.Fits(tempEntryList[i]))
             {
-                _childNodes.Insert(tempObjectList[i]);
+                _childNodes.Insert(tempEntryList[i]);
             }
             else
             {
-                _objects.Add(tempObjectList[i]);
+                _objects.Add(tempEntryList[i]);
             }
         }
 
         PollActivity();
     }
-    private void Add(NodeObject<T> obj)
+    private void Add(DataEntry<T, Rect> entry)
     {
-        _objects.Add(obj);
+        _objects.Add(entry);
 
         PollSplit();
         PollActivity();
     }
-    private void Remove(NodeObject<T> obj)
+    private void Remove(DataEntry<T, Rect> entry)
     {
-        _objects.Remove(obj);
+        _objects.Remove(entry);
 
         PollActivity();
     }
@@ -97,9 +97,9 @@ public class QuadtreeNode<T> {
     {
         _lastActivityFrameNumber = Time.frameCount;
     }
-    public bool Fits(NodeObject<T> obj)
+    public bool Fits(DataEntry<T, Rect> entry)
     {
-        return Utility.Encapsulates(obj.Rect, _rect);
+        return Utility.Encapsulates(entry.Key, _rect);
     }
     public void Draw()
     {
@@ -109,7 +109,7 @@ public class QuadtreeNode<T> {
             EG_Debug.DrawRect(_rect.Shrink(0.1f), DRAW_ACTIVITY_COLOR);
 
         for (int i = 0; i < _objects.Count; i++)
-            EG_Debug.DrawRect(_objects[i].Rect, DRAW_OBJECT_COLOR);
+            EG_Debug.DrawRect(_objects[i].Key, DRAW_OBJECT_COLOR);
 
         if (HasChildNodes)
         {
@@ -126,7 +126,7 @@ public class QuadtreeNode<T> {
         {
             for (int i = 0; i < _objects.Count; i++)
             {
-                if (Utility.Intersects(_objects[i].Rect, rect) || Utility.Encapsulates(_objects[i].Rect, rect))
+                if (Utility.Intersects(_objects[i].Key, rect) || Utility.Encapsulates(_objects[i].Key, rect))
                 {
                     results.Add(_objects[i].Object);
                 }
@@ -202,11 +202,11 @@ public class QuadtreeNode<T> {
 
         private readonly QuadtreeNode<T>[] _nodes;
 
-        public bool Fits(NodeObject<T> obj)
+        public bool Fits(DataEntry<T, Rect> entry)
         {
             for (int i = 0; i < _nodes.Length; i++)
             {
-                if (_nodes[i].Fits(obj))
+                if (_nodes[i].Fits(entry))
                 {
                     return true;
                 }
@@ -214,18 +214,18 @@ public class QuadtreeNode<T> {
 
             return false;
         }
-        public void Insert(NodeObject<T> obj)
+        public void Insert(DataEntry<T, Rect> entry)
         {
             for (int i = 0; i < _nodes.Length; i++)
             {
-                if (_nodes[i].Fits(obj))
+                if (_nodes[i].Fits(entry))
                 {
-                    _nodes[i].Insert(obj);
+                    _nodes[i].Insert(entry);
                     return;
                 }
             }
             
-            throw new System.ArgumentException("Rect " + obj.Rect + " doesn't fit in any child nodes. Call Fits before Insert");
+            throw new System.ArgumentException("Rect " + entry.Key + " doesn't fit in any child nodes. Call Fits before Insert");
         }
         public void Do(System.Action<QuadtreeNode<T>> action)
         {

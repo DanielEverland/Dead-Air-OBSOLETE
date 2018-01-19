@@ -4,7 +4,21 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public static class Extensions {
-    
+
+    /// <summary>
+    /// Determines whether <paramref name="a"/> is divisible by <paramref name="b"/>
+    /// </summary>
+    public static bool IsDivisible(this int a, float b)
+    {
+        return !((float)a / b).IsDecimal();
+    }
+    /// <summary>
+    /// Determines whether <paramref name="a"/> is divisible by <paramref name="b"/>
+    /// </summary>
+    public static bool IsDivisible(this float a, float b)
+    {
+        return !(a / b).IsDecimal();
+    }
     public static List<System.Type> GetDerivedTypesOrdered(this System.Type type)
     {
         List<System.Type> unordered = GetDerivedTypes(type);
@@ -147,7 +161,7 @@ public static class Extensions {
     }
     public static bool IsDecimal(this double x)
     {
-        return (x % 1) == 0;
+        return (x % 1) != 0;
     }
     public static T Random<T>(this IEnumerable<T> list)
     {

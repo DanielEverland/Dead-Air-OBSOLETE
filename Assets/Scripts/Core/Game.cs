@@ -10,6 +10,7 @@ public class Game : MonoBehaviour {
 
     private static List<Action> LoadFlow = new List<Action>()
     {
+        EG_Debug.Initialize,
         TileType.LoadAllTileTypes,
         ChunkGenerator.Initialize,
         MapDataManager.Initialize,
@@ -22,8 +23,7 @@ public class Game : MonoBehaviour {
     }
     private void Update()
     {
-        MapData.RefreshQuadtree();
-        MapData.EntityQuadtree.Draw();
+        MapData.Update();
     }
     private static void InitializeGame()
     {

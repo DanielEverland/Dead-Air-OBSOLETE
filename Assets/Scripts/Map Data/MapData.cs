@@ -8,6 +8,7 @@ public class MapData {
         instance = this;
 
         _entityQuadtree = new Quadtree<Entity>(MAPSIZE);
+        _entityCommunicationHash = new RadialSpatialHash<Entity>(COMMUNICATION_BUCKET_SIZE);
 
         PopulateMap();
     }
@@ -21,10 +22,17 @@ public class MapData {
     public static IDictionary<Vector2, Chunk> Chunks { get { return instance._chunks; } }
 
     public static Quadtree<Entity> EntityQuadtree { get { return instance._entityQuadtree; } }
+    public static RadialSpatialHash<Entity> EntityCommunicationHash { get { return instance._entityCommunicationHash; } }
 
     private Dictionary<Vector2, Chunk> _chunks;
     private List<Entity> _entities;
     private Quadtree<Entity> _entityQuadtree;
+    private RadialSpatialHash<Entity> _entityCommunicationHash;
+
+    /// <summary>
+    /// Size of the buckets in the communication spatial hash
+    /// </summary>
+    public const int COMMUNICATION_BUCKET_SIZE = 32;
 
     /// <summary>
     /// How many tiles wide and high should the map be?
@@ -65,15 +73,31 @@ public class MapData {
     /// How closely should colonists be placed? 1 leaves no extra space, 2 will leave as much space as there are colonists and so forth.
     /// </summary>
     private const float COLONIST_DENSITY = 5;
+    
+    private static void PollForDataInsertion(Entity entity)
+    {
+        //Quadtree
+        instance._entityQuadtree.Insert(entity.Rect, entity);
 
-    public static void RefreshQuadtree()
+        //Communication Spatial Hash
+        if(entity is ICommunicableEntity)
+        {
+            ICommunicableEntity communicableEntity = entity as ICommunicableEntity;
+
+            instance._entityCommunicationHash.Insert(entity, entity.transform.position, communicableEntity.HearingRange);
+        }
+    }
+    public static void Update()
     {
         instance._entityQuadtree = new Quadtree<Entity>(MAPSIZE);
+        instance._entityCommunicationHash = new RadialSpatialHash<Entity>(COMMUNICATION_BUCKET_SIZE);
 
-        for (int i = 0; i < instance._entities.Count; i++)
+        foreach (Entity entity in Entities)
         {
-            instance._entityQuadtree.Insert(instance._entities[i].Rect, instance._entities[i]);
+            PollForDataInsertion(entity);
         }
+
+        instance._entityCommunicationHash.Draw();
     }
     public static Entity CreateEntity<T>() where T : Entity
     {

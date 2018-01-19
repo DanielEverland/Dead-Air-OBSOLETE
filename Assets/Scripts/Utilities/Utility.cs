@@ -10,7 +10,9 @@ public static class Utility {
 
     public const int CONTEXT_MENU_ORDER = 100;
 
-    
+    //Sqrt(1^2 + 1^2)
+    public const float SQUARE_CORNER_DISTANCE = 1.41421356237f;
+
     /// <summary>
     /// Converts radian to a vector
     /// </summary>
