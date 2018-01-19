@@ -18,7 +18,7 @@ public class Zombie : WorkableEntity
     /// <summary>
     /// Range in meters that zombies can communicate with each other
     /// </summary>
-    private float COMMUNICATION_RANGE = 5;
+    private float COMMUNICATION_RANGE = 10;
     
     protected override void OnSightEnter(Entity entity)
     {
