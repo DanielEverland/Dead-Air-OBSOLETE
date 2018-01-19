@@ -5,11 +5,11 @@ using UnityEngine;
 public abstract class MovableEntity : Entity, ISeeingEntity {
 
     [SerializeField]
-    private float speed = 1;
+    private float _speed = 1;
     [SerializeField]
-    private float seeingRange = 5;
+    private float _seeingRange = 5;
 
-    public float SightRange { get { return seeingRange; } }
+    public float SightRange { get { return _seeingRange; } }
 
     private Vector2? targetPosition;
 
@@ -28,7 +28,7 @@ public abstract class MovableEntity : Entity, ISeeingEntity {
     private void Move()
     {
         Vector2 moveDelta = targetPosition.Value - (Vector2)transform.position;
-        float moveDistance = (speed * Time.deltaTime);
+        float moveDistance = (_speed * Time.deltaTime);
 
         if(moveDelta.magnitude < moveDistance)
         {
