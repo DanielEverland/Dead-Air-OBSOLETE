@@ -80,11 +80,11 @@ public class MapData {
         instance._entityQuadtree.Insert(entity.Rect, entity);
 
         //Communication Spatial Hash
-        if(entity is ICommunicableEntity)
+        if(entity is ISeeingEntity)
         {
-            ICommunicableEntity communicableEntity = entity as ICommunicableEntity;
+            ISeeingEntity communicableEntity = entity as ISeeingEntity;
 
-            instance._entityCommunicationHash.Insert(entity, entity.transform.position, communicableEntity.HearingRange);
+            instance._entityCommunicationHash.Insert(entity, entity.transform.position, communicableEntity.SightRange);
         }
     }
     public static void Update()
