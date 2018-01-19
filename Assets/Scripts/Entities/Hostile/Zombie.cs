@@ -9,7 +9,7 @@ public class Zombie : WorkableEntity
     public override WorkManager WorkManager { get { return WorkManager.ZombieWorkManager; } }
 
     protected override EntityPriorityLevel PriorityLevel { get { return EntityPriorityLevel.Enemy; } }
-
+    
     /// <summary>
     /// Time between receiving new work and communicating it to other zombies
     /// </summary>
@@ -20,30 +20,39 @@ public class Zombie : WorkableEntity
     /// </summary>
     private float COMMUNICATION_RANGE = 5;
     
-    protected override void OnStartedWork()
+    protected override void OnSightEnter(Entity entity)
     {
-        if(CurrentWork is IHordeAbleWork)
-            ActionManager.DelayedCallback(COMMUNICATION_DELAY, CommunicateNewWork, x => { return x == CurrentWork; }, CurrentWork);
-    }
-    private void CommunicateNewWork()
-    {
-        List<Zombie> zombiesWithinRange = Game.GetEntitiesWithinRange<Zombie>(transform.position, COMMUNICATION_RANGE);
-
-        for (int i = 0; i < zombiesWithinRange.Count; i++)
+        if(entity is Zombie)
         {
-            zombiesWithinRange[i].ReceiveCommunicatedWork(CurrentWork);
+            CommunicateWithZombie((Zombie)entity);
+        }
+        else if(entity is Colonist)
+        {
+            EngageColonist(entity as Colonist);
         }
     }
-    private void ReceiveCommunicatedWork(IWork work)
+    private void EngageColonist(Colonist colonist)
     {
-        if (!(work is IHordeAbleWork))
+        if (!(CurrentWork is MoveDirectionWork))
             return;
 
-        IHordeAbleWork hordableWork = work as IHordeAbleWork;
+        AssignWork(new FollowWork(colonist));
 
-        if(!hordableWork.Compare(CurrentWork))
+        Game.GetVisibleEntitiesWithinRange<Zombie>(Position, COMMUNICATION_RANGE).ForEach(x => x.EngageColonist(colonist));
+    }
+    private void CommunicateWithZombie(Zombie zombie)
+    {
+        if (!HasWork)
+            return;
+
+        if(CurrentWork is IHordeAbleWork)
         {
-            AssignWork(work);
+            IHordeAbleWork hordeAbleWork = CurrentWork as IHordeAbleWork;
+
+            if (!hordeAbleWork.Compare(zombie.CurrentWork))
+            {
+                zombie.AssignWork(CurrentWork);
+            }
         }
     }
 }

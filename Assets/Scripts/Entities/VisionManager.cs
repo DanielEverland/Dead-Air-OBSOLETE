@@ -27,11 +27,11 @@ public class VisionManager {
                     //Other entity was visible last frame
                     if (lastVisionMatrix[entity].Contains(visibleEntities[i]))
                     {
-                        entity.OnSightStay(visibleEntities[i]);
+                        entity.SightStay(visibleEntities[i]);
                     }
                     else
                     {
-                        entity.OnSightEnter(visibleEntities[i]);
+                        entity.SightEnter(visibleEntities[i]);
                     }
 
                     newVisionMatrix[entity].Add(visibleEntities[i]);
@@ -40,7 +40,7 @@ public class VisionManager {
                 foreach (Entity oldVisibleEntity in lastVisionMatrix[entity])
                 {
                     if (!newVisionMatrix[entity].Contains(oldVisibleEntity))
-                        entity.OnSightLeave(oldVisibleEntity);
+                        entity.SightLeave(oldVisibleEntity);
                 }
             }
         }

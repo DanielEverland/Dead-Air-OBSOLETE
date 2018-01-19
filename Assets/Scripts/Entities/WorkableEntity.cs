@@ -6,9 +6,10 @@ using UnityEngine;
 public abstract class WorkableEntity : MovableEntity
 {
     public IWork CurrentWork { get { return currentWork; } }
+    public bool HasWork { get { return currentWork != null; } }
 
     public abstract WorkManager WorkManager { get; }
-
+    
     private IWork currentWork;
 
     protected new virtual void Update()

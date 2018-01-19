@@ -15,18 +15,21 @@ public abstract class SeeingEntity : VisibleEntity, ISeeingEntity {
 
         VisionManager.AddVisibleEntity(this);
     }
-    public void OnSightEnter(Entity entity)
+    public void SightEnter(Entity entity)
     {
-        
+        OnSightEnter(entity);
     }
-    public void OnSightLeave(Entity entity)
+    public void SightLeave(Entity entity)
     {
-        
+        OnSightLeave(entity);
     }
-    public void OnSightStay(Entity entity)
+    public void SightStay(Entity entity)
     {
-        
+        OnSightStay(entity);
     }
+    protected virtual void OnSightEnter(Entity entity) { }
+    protected virtual void OnSightStay(Entity entity) { }
+    protected virtual void OnSightLeave(Entity entity) { }
     protected override void OnDead()
     {
         base.OnDead();
