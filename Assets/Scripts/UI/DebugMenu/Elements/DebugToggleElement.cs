@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using TMPro;
 
 [RequireComponent(typeof(Toggle))]
-public class DebugToggleElement : MonoBehaviour {
+public class DebugToggleElement : DebugElement {
 
     [SerializeField]
     private Toggle _toggleElement;
@@ -26,5 +26,11 @@ public class DebugToggleElement : MonoBehaviour {
     private void OnValueChanged(bool value)
     {
         _propertyInfo.SetValue(null, value, null);
+
+        SetDirty();
+    }
+    protected override void Reload()
+    {
+        _toggleElement.isOn = (bool)_propertyInfo.GetValue(null, null);
     }
 }

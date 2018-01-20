@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,19 +13,26 @@ public class DebugMenuCategory : MonoBehaviour {
     private DebugToggleElement _togglePrefab;
 
     private Dictionary<string, HeaderElement> _headers = new Dictionary<string, HeaderElement>();
+    private List<DebugElement> _elements = new List<DebugElement>();
 
+    public void SetDirty()
+    {
+        _elements.ForEach(x => x.DoReload());
+    }
     public void Initialize(List<DebugManager.AttributeEntry> attributes)
     {
         foreach (DebugManager.AttributeEntry attribute in attributes)
         {
             HeaderElement header = GetHeader(attribute.Attribute.Header);
 
-            GameObject attributeObject = CreateAttribute(attribute);
+            DebugElement attributeObject = CreateAttribute(attribute);
+            attributeObject.Initialize(this);
 
-            header.AddElement(attributeObject);
+            header.AddElement(attributeObject.gameObject);
+            _elements.Add(attributeObject);
         }
     }
-    private GameObject CreateAttribute(DebugManager.AttributeEntry attribute)
+    private DebugElement CreateAttribute(DebugManager.AttributeEntry attribute)
     {
         if(attribute is DebugManager.PropertyAttributeEntry)
         {
@@ -35,7 +43,7 @@ public class DebugMenuCategory : MonoBehaviour {
             throw new System.NotImplementedException("Cannot recognize type " + attribute.GetType());
         }
     }
-    private GameObject CreatePropertyElement(DebugManager.PropertyAttributeEntry property)
+    private DebugElement CreatePropertyElement(DebugManager.PropertyAttributeEntry property)
     {
         if(property.Attribute is EG_Debug.Toggle)
         {
@@ -43,7 +51,7 @@ public class DebugMenuCategory : MonoBehaviour {
 
             toggleElement.Initialize(property.Attribute as EG_Debug.Toggle, property.Property);
 
-            return toggleElement.gameObject;
+            return toggleElement;
         }
         else
         {

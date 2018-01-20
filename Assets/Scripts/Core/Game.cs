@@ -24,6 +24,64 @@ public class Game : MonoBehaviour {
     }
     private static bool _testProperty;
 
+    [EG_Debug.Toggle("General", "Test Boolean Value", false)]
+    private static bool TestPropertya
+    {
+        get
+        {
+            return _testProperty;
+        }
+        set
+        {
+            _testProperty = value;
+
+            Debug.Log(value);
+        }
+    }
+
+    [EG_Debug.Toggle("General", "Test Boolean Value", false)]
+    private static bool TestPropertyb
+    {
+        get
+        {
+            return _testProperty;
+        }
+        set
+        {
+            _testProperty = value;
+
+            Debug.Log(value);
+        }
+    }
+    [EG_Debug.Toggle("General", "Test Boolean Value", false)]
+    private static bool TestPropertyba
+    {
+        get
+        {
+            return _testProperty;
+        }
+        set
+        {
+            _testProperty = value;
+
+            Debug.Log(value);
+        }
+    }
+    [EG_Debug.Toggle("General", "Test Boolean Value", false)]
+    private static bool TestPropertybgf
+    {
+        get
+        {
+            return _testProperty;
+        }
+        set
+        {
+            _testProperty = value;
+
+            Debug.Log(value);
+        }
+    }
+
     private static List<Action> LoadFlow = new List<Action>()
     {
         EG_Debug.Initialize,
