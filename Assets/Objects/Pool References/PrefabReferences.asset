@@ -15,3 +15,6 @@ MonoBehaviour:
   - Key: SelectionMarker
     Object: {fileID: 114513102754456420, guid: 462cf1e4794970e46a8f24c3ebb57414, type: 2}
     Instances: 15
+  - Key: DebugMenu
+    Object: {fileID: 1580950210531274, guid: 7f6d61624fca0bc4888d392bbad0585e, type: 2}
+    Instances: 1

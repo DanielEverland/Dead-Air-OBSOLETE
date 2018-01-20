@@ -8,6 +8,22 @@ public class Game : MonoBehaviour {
 
     public static Player Player { get { return Player.Instance; } }
 
+    [EG_Debug.Toggle("General", "Test Boolean Value", false)]
+    private static bool TestProperty
+    {
+        get
+        {
+            return _testProperty;
+        }
+        set
+        {
+            _testProperty = value;
+
+            Debug.Log(value);
+        }
+    }
+    private static bool _testProperty;
+
     private static List<Action> LoadFlow = new List<Action>()
     {
         EG_Debug.Initialize,
@@ -15,8 +31,9 @@ public class Game : MonoBehaviour {
         ChunkGenerator.Initialize,
         MapDataManager.Initialize,
         PlayerCamera.Center,
+        DebugManager.Initialize,
     };
-
+    
     private void Start()
     {
         InitializeGame();
@@ -25,6 +42,7 @@ public class Game : MonoBehaviour {
     {
         MapData.Update();
         VisionManager.Update();
+        DebugMenu.GlobalUpdate();
     }
     private static void InitializeGame()
     {

@@ -5,6 +5,15 @@ using UnityEngine;
 
 public static class Extensions {
 
+    public static Rect GetWorldRect(this RectTransform rectTransform)
+    {
+        Vector3[] corners = new Vector3[4];
+        rectTransform.GetWorldCorners(corners);
+
+        Vector3 topLeft = corners[0];
+
+        return new Rect(topLeft, rectTransform.rect.size);
+    }
     /// <summary>
     /// Determines whether <paramref name="a"/> is divisible by <paramref name="b"/>
     /// </summary>

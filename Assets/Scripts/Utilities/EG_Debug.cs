@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class EG_Debug {
+public static partial class EG_Debug {
 
     private static EG_DebugGizmos gizmosInstance;
 
