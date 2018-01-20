@@ -28,8 +28,6 @@ public class DebugMenu : MonoBehaviour {
     private void Awake()
     {
         _menuInstance = this;
-
-        gameObject.SetActive(false);
     }
     private void Start()
     {
@@ -38,6 +36,8 @@ public class DebugMenu : MonoBehaviour {
 
         if (_categoryElements.Count > 0)
             _categoryElements[0].Select();
+
+        gameObject.SetActive(false);
     }
     private void Initialize()
     {
