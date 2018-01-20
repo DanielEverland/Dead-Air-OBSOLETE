@@ -16,7 +16,6 @@ public class MapData {
     private static MapData instance;
 
     public static IEnumerable<Entity> Entities { get { return instance._entities; } }
-
     public static IEnumerable<Chunk> ChunkObjects { get { return instance._chunks.Values; } }
     public static IEnumerable<Vector2> ChunkPositions { get { return instance._chunks.Keys; } }
     public static IDictionary<Vector2, Chunk> Chunks { get { return instance._chunks; } }
@@ -31,7 +30,7 @@ public class MapData {
     /// <summary>
     /// Size of the buckets in the communication spatial hash
     /// </summary>
-    public const int COMMUNICATION_BUCKET_SIZE = 32;
+    public const int COMMUNICATION_BUCKET_SIZE = 8;
 
     /// <summary>
     /// How many tiles wide and high should the map be?

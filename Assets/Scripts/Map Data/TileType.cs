@@ -27,7 +27,7 @@ public class TileType : ScriptableObject {
         }
     }
     
-    public bool IsSpawnable { get { return _isSpawnable; } }
+    public bool IsSpawnable { get { return _isSpawnable; } set { _isSpawnable = value; } }
     public byte ID { get; private set; }
     public Sprite Sprite { get { return _appearance; } }
     public Texture2D Texture
