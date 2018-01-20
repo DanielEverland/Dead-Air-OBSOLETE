@@ -49,8 +49,6 @@ public static class DebugManager {
     }
     private static void CreateNewPropertyEntry(EG_Debug.PropertyAttribute attribute, PropertyInfo property)
     {
-        Debug.Log("Creating " + property.Name);
-
         PropertyAttributeEntry entry = new PropertyAttributeEntry()
         {
             Attribute = attribute,
