@@ -84,6 +84,28 @@ public class ListElement : Selectable {
     {
         
     }
+    protected override void OnDisable()
+    {
+        
+    }
+    protected override void OnEnable()
+    {
+        if (IsOn)
+        {
+            DoStateTransition(SelectionState.Pressed, true);
+        }
+        else
+        {
+            if (_containsMouse)
+            {
+                DoStateTransition(SelectionState.Highlighted, true);
+            }
+            else
+            {
+                DoStateTransition(SelectionState.Normal, true);
+            }            
+        }        
+    }    
     protected new void DoStateTransition(SelectionState state, bool instant)
     {
         base.DoStateTransition(state, instant);
