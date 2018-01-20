@@ -35,7 +35,7 @@ public class CategoryAligner : UIBehaviour, ILayoutSelfController {
     public void SetLayoutVertical()
     {
         m_Tracker.Clear();
-        _contentElement.anchoredPosition = new Vector2(0, -_titleElement.GetWorldRect().height);
+        _contentElement.anchoredPosition = new Vector2(_contentElement.anchoredPosition.x, -_titleElement.GetWorldRect().height);
 
         float size = _contentElement.GetWorldRect().height + _titleElement.GetWorldRect().height;
         rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, size);
