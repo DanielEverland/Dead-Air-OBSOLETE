@@ -34,6 +34,7 @@ public class Quadtree<T> {
     }
     public void Draw()
     {
-        root.Draw();
+        if(DebugData.QuadtreeDrawObjects || DebugData.QuadtreeDrawAllRects || DebugData.QuadtreeDrawTicks)
+            root.Draw();
     }
 }

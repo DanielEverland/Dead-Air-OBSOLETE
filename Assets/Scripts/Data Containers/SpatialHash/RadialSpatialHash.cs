@@ -73,11 +73,14 @@ public class RadialSpatialHash<T> : SpatialHash<T, Circle> {
     public override void Draw()
     {
         base.Draw();
-        
-        foreach (DataEntry<T, Circle> entry in Entries)
+
+        if (DebugData.SpatialHashDrawObjects)
         {
-            EG_Debug.DrawCircle(entry.Key.center, entry.Key.radius);
-        }
+            foreach (DataEntry<T, Circle> entry in Entries)
+            {
+                EG_Debug.DrawCircle(entry.Key.center, entry.Key.radius);
+            }
+        }        
     }
 #endif
 }

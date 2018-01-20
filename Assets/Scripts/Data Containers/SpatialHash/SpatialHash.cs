@@ -145,12 +145,18 @@ public class SpatialHash<T1, T2> {
     } 
     public virtual void Draw()
     {
+        if (!DebugData.SpatialHashDrawAllBuckets && !DebugData.SpatialHashDrawTicks)
+            return;
+
         foreach (Vector2 bucketPosition in _buckets.Keys)
         {
             Rect rect = new Rect(bucketPosition * CellSize, Vector2.one * CellSize);
-            Color color = WasUsedRecently(bucketPosition) ? UsedBucketColor : IdleBucketColor;
 
-            EG_Debug.DrawRect(rect, color);
+            if(DebugData.SpatialHashDrawAllBuckets)
+                EG_Debug.DrawRect(rect, IdleBucketColor);
+
+            if(DebugData.SpatialHashDrawTicks)
+                EG_Debug.DrawRect(rect.Shrink(0.1f), UsedBucketColor);
         }
     }
 }

@@ -103,13 +103,17 @@ public class QuadtreeNode<T> {
     }
     public void Draw()
     {
-        EG_Debug.DrawRect(_rect, DRAW_QUAD_COLOR);
+        if(DebugData.QuadtreeDrawAllRects)
+            EG_Debug.DrawRect(_rect, DRAW_QUAD_COLOR);
 
-        if(Time.frameCount - _lastActivityFrameNumber <= LAST_ACTIVITY_DRAW_MARGIN)
+        if(Time.frameCount - _lastActivityFrameNumber <= LAST_ACTIVITY_DRAW_MARGIN && DebugData.QuadtreeDrawTicks)
             EG_Debug.DrawRect(_rect.Shrink(0.1f), DRAW_ACTIVITY_COLOR);
 
-        for (int i = 0; i < _objects.Count; i++)
-            EG_Debug.DrawRect(_objects[i].Key, DRAW_OBJECT_COLOR);
+        if(DebugData.QuadtreeDrawObjects)
+        {
+            for (int i = 0; i < _objects.Count; i++)
+                EG_Debug.DrawRect(_objects[i].Key, DRAW_OBJECT_COLOR);
+        }        
 
         if (HasChildNodes)
         {

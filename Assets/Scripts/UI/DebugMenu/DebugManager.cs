@@ -12,9 +12,6 @@ public static class DebugManager {
 
 	public static void Initialize()
     {
-        if (!Debug.isDebugBuild)
-            return;
-
         LoadDebugSettings();
         CreateDebugMenu();
     }

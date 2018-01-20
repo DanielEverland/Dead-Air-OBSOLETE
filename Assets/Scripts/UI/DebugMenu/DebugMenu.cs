@@ -94,7 +94,11 @@ public class DebugMenu : MonoBehaviour {
     }
     public static void GlobalUpdate()
     {
-        if (Input.GetKeyDown(KeyCode.F1))
+        if (Input.GetKeyDown(KeyCode.F1) && Debug.isDebugBuild)
+        {
+            _menuInstance.Toggle();
+        }
+        else if(Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.F1))
         {
             _menuInstance.Toggle();
         }

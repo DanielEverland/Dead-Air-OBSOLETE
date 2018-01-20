@@ -99,6 +99,11 @@ public class MapData {
             PollForDataInsertion(entity);
         }
 
+        DrawDataStructures();
+    }
+    private static void DrawDataStructures()
+    {
+        EntityQuadtree.Draw();
         instance._entityCommunicationHash.Draw();
     }
     public static Entity CreateEntity<T>() where T : Entity
