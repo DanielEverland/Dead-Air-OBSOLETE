@@ -8,6 +8,25 @@ using TMPro;
 
 public class ListElement : Selectable {
 
+    public bool IsOn
+    {
+        get
+        {
+            return _isOn;
+        }
+        set
+        {
+            if(value == true)
+            {
+                Select();
+            }
+            else
+            {
+                Deselect();
+            }
+        }
+    }
+
     [SerializeField]
     private TMP_Text _textElement;
     [SerializeField]
@@ -41,7 +60,7 @@ public class ListElement : Selectable {
     }
     public override void OnPointerDown(PointerEventData eventData)
     {
-        ListManager.SetAsActive(this);
+        Select();
     }
     public override void OnPointerEnter(PointerEventData eventData)
     {
@@ -97,6 +116,8 @@ public class ListElement : Selectable {
     }
     public new void Select()
     {
+        ListManager.SetAsActive(this);
+
         _isOn = true;
 
         DoStateTransition(SelectionState.Pressed, true);

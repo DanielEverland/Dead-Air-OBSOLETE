@@ -20,6 +20,7 @@ public class DebugMenu : MonoBehaviour {
 
     private Dictionary<byte, List<DebugManager.AttributeEntry>> _categorisedData = new Dictionary<byte, List<DebugManager.AttributeEntry>>();
     private Dictionary<byte, GameObject> _contentObjects = new Dictionary<byte, GameObject>();
+    private Dictionary<byte, DebugMenuCategoryElement> _categoryElements = new Dictionary<byte, DebugMenuCategoryElement>();
     private Dictionary<string, byte> _idLookup = new Dictionary<string, byte>();
 
     private GameObject _currentContent;
@@ -34,6 +35,9 @@ public class DebugMenu : MonoBehaviour {
     {
         Initialize();
         CreateCategoryMenu();
+
+        if (_categoryElements.Count > 0)
+            _categoryElements[0].Select();
     }
     private void Initialize()
     {
@@ -50,6 +54,7 @@ public class DebugMenu : MonoBehaviour {
             categoryElement.transform.SetParent(_categoryRoot); 
 
             categoryElement.Initialize(this, keyValuePair.Value, keyValuePair.Key);
+            _categoryElements.Add(keyValuePair.Value, categoryElement);
         }
     }
     public void CategorySelected(byte ID)
@@ -81,24 +86,6 @@ public class DebugMenu : MonoBehaviour {
 
         byte id = _idLookup[entry.Attribute.Category];
         _categorisedData[id].Add(entry);
-    }
-    private void AddProperty(DebugManager.PropertyAttributeEntry propertyEntry)
-    {
-        if(propertyEntry.Attribute is EG_Debug.Toggle)
-        {
-            AddToggle(propertyEntry.Attribute as EG_Debug.Toggle, propertyEntry.Property);
-        }
-        else
-        {
-            Debug.LogError("Property " + propertyEntry.Attribute.GetType() + " is not recognized");
-        }
-    } 
-    private void AddToggle(EG_Debug.Toggle attribute, PropertyInfo info)
-    {
-        DebugToggleElement toggleElement = Instantiate(_toggleElementPrefab);
-        toggleElement.transform.SetParent(transform, false);
-
-        toggleElement.Initialize(attribute, info);
     }
     private void Toggle()
     {

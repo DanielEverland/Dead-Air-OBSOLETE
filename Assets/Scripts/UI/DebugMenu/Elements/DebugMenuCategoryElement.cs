@@ -8,6 +8,8 @@ public class DebugMenuCategoryElement : MonoBehaviour {
 
     [SerializeField]
     private TMP_Text textElement;
+    [SerializeField]
+    private ListElement listElement;
 
     private DebugMenu _menu;
     private byte _ID;
@@ -18,6 +20,10 @@ public class DebugMenuCategoryElement : MonoBehaviour {
         _ID = id;
 
         textElement.text = categoryName;
+    }
+    public void Select()
+    {
+        listElement.Select();
     }
 	public void OnSelected()
     {

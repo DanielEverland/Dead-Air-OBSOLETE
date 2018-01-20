@@ -24,7 +24,6 @@ public class ListManager : MonoBehaviour {
         if(_currentlyActive != element)
         {
             _currentlyActive = element;
-            _currentlyActive.Select();
         }        
     }
 	public void RegisterElement(ListElement element)
