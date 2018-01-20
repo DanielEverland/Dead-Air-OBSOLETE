@@ -52,16 +52,25 @@ public static class DebugManager {
             Property = property,
         };
 
+        entry.AssignDefaultValue();
+
         _attributes.Add(entry);
     }
 
-    public class AttributeEntry
+    public abstract class AttributeEntry
     {
         public EG_Debug.DebugAttribute Attribute;
     }
     public class PropertyAttributeEntry : AttributeEntry
     {   
         public PropertyInfo Property;
+
+        public new EG_Debug.PropertyAttribute Attribute { get { return (EG_Debug.PropertyAttribute)base.Attribute; } set { base.Attribute = value; } }
+
+        public void AssignDefaultValue()
+        {
+            Property.SetValue(null, Attribute.GetDefaultValue(), null);
+        }
     }
 }
 
@@ -91,6 +100,8 @@ public static partial class EG_Debug
     public abstract class PropertyAttribute : DebugAttribute
     {
         public PropertyAttribute(string category, string title) : base(category, title) { }
+
+        public abstract object GetDefaultValue();
     }
 
 
@@ -104,6 +115,11 @@ public static partial class EG_Debug
         public bool DefaultValue { get { return _defaultValue; } }
 
         private readonly bool _defaultValue;
+
+        public override object GetDefaultValue()
+        {
+            return _defaultValue;
+        }
     }
 }
 #endregion
