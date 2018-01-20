@@ -15,6 +15,10 @@ public class DebugMenuCategory : MonoBehaviour {
     private Dictionary<string, HeaderElement> _headers = new Dictionary<string, HeaderElement>();
     private List<DebugElement> _elements = new List<DebugElement>();
 
+    private void OnEnable()
+    {
+        SetDirty();
+    }
     public void SetDirty()
     {
         _elements.ForEach(x => x.DoReload());
