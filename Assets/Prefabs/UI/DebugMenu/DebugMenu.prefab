@@ -419,6 +419,8 @@ MonoBehaviour:
   _contentRoot: {fileID: 224611213756181574}
   _debugMenuElementPrefab: {fileID: 114208735585576556, guid: 76e7c2dd269926f4fb2ea2f89c047f95,
     type: 2}
+  _categoryPrefab: {fileID: 114918309594042556, guid: 4df27b0f313c13f41a7678e43336fab7,
+    type: 2}
 --- !u!114 &114986423619097964
 MonoBehaviour:
   m_ObjectHideFlags: 1

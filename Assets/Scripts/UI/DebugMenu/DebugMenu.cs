@@ -15,6 +15,8 @@ public class DebugMenu : MonoBehaviour {
     private RectTransform _contentRoot;
     [SerializeField]
     private DebugMenuCategoryElement _debugMenuElementPrefab;
+    [SerializeField]
+    private DebugMenuCategory _categoryPrefab;
 
     private Dictionary<byte, List<DebugManager.AttributeEntry>> _categorisedData = new Dictionary<byte, List<DebugManager.AttributeEntry>>();
     private Dictionary<byte, GameObject> _contentObjects = new Dictionary<byte, GameObject>();
@@ -63,7 +65,11 @@ public class DebugMenu : MonoBehaviour {
     }
     private void CreateContent(byte ID)
     {
+        DebugMenuCategory category = Instantiate(_categoryPrefab);
+        category.transform.SetParent(_contentRoot, false);
+        _contentObjects.Add(ID, category.gameObject);
 
+        category.Initialize(_categorisedData[ID]);
     }
     private void LoadEntry(DebugManager.AttributeEntry entry)
     {

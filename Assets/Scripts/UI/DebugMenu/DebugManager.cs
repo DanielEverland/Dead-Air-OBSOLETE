@@ -85,7 +85,9 @@ public static partial class EG_Debug
 
         public string Title { get { return _title; } }
         public string Category { get { return _category; } }
-        public string Header { get; set; }
+        public string Header { get { return _header; } set { _header = value; } }
+
+        private string _header = "";
 
         private readonly string _title;
         private readonly string _category;
