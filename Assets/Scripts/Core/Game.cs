@@ -39,7 +39,7 @@ public class Game : MonoBehaviour {
         }
     }
 
-    [EG_Debug.Toggle("General", "Test Boolean Value", false)]
+    [EG_Debug.Toggle("General", "Test Boolean Value", false, Header = "This is a different header")]
     private static bool TestPropertyb
     {
         get
