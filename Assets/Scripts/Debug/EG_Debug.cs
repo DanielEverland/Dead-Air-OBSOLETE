@@ -46,17 +46,7 @@ public static partial class EG_Debug {
     }
     public static void DrawRect(Vector2 center, Vector2 size, Color color, float duration)
     {
-        Vector2[] corners = Utility.GetCornerPoints(center, size);
-
-        for (int i = 0; i < corners.Length; i++)
-        {
-            Debug.DrawLine(
-                corners[i],
-                corners[i + 1 < corners.Length ? i + 1 : 0],
-                color,
-                duration,
-                false);
-        }
+        EG_GL.DrawRect(new Rect(center - size / 2, size), color, duration);
     }
 
     private class EG_DebugGizmos : MonoBehaviour

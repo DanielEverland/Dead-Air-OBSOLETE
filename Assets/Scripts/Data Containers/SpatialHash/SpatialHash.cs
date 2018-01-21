@@ -60,7 +60,7 @@ public class SpatialHash<T1, T2> {
     private Dictionary<Vector2, List<DataEntry<T1, T2>>> _buckets;
     private Dictionary<Vector2, int> _bucketUsedFrameCount;
 
-    private Color IdleBucketColor { get { return Color.red; } }
+    private Color IdleBucketColor { get { return Color.white; } }
     private Color UsedBucketColor { get { return Color.cyan; } }
 
     private const int UsedFrameMargin = 3;
@@ -147,7 +147,7 @@ public class SpatialHash<T1, T2> {
     {
         if (!DebugData.SpatialHashDrawAllBuckets && !DebugData.SpatialHashDrawTicks)
             return;
-
+        
         foreach (Vector2 bucketPosition in _buckets.Keys)
         {
             Rect rect = new Rect(bucketPosition * CellSize, Vector2.one * CellSize);
