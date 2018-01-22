@@ -31,7 +31,15 @@ public class ChunkGenerator {
     }
 	public static void RenderChunk(Chunk chunk)
     {
-        currentMeshFilter = ChunkObjectPool.GetMeshFilter();
+        if (chunk.HasGameObject)
+        {
+            currentMeshFilter = chunk.GameObject.GetComponent<MeshFilter>();
+        }
+        else
+        {
+            currentMeshFilter = ChunkObjectPool.GetMeshFilter();
+        }
+        
         currentMesh = new Mesh();
         verticeCount = 0;
         materials.Clear();
@@ -43,7 +51,7 @@ public class ChunkGenerator {
         {
             for (int y = 0; y < Chunk.CHUNK_SIZE; y++)
             {
-                AddTile(x, y, chunk.Tiles[x, y]);
+                AddTile(x, y, chunk.GetChunkTile((byte)x, (byte)y));
             }
         }
 

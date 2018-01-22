@@ -9,6 +9,7 @@ public class MapData {
 
         _entityQuadtree = new Quadtree<Entity>(MAPSIZE);
         _entityCommunicationHash = new RadialSpatialHash<Entity>(COMMUNICATION_BUCKET_SIZE);
+        _dirtyChunks = new Queue<Chunk>();
 
         PopulateMap();
     }
@@ -26,6 +27,7 @@ public class MapData {
     private List<Entity> _entities;
     private Quadtree<Entity> _entityQuadtree;
     private RadialSpatialHash<Entity> _entityCommunicationHash;
+    private Queue<Chunk> _dirtyChunks;
 
     /// <summary>
     /// Size of the buckets in the communication spatial hash
@@ -71,7 +73,46 @@ public class MapData {
     /// How closely should colonists be placed? 1 leaves no extra space, 2 will leave as much space as there are colonists and so forth.
     /// </summary>
     private const float COLONIST_DENSITY = 5;
-    
+
+    public static void Update()
+    {
+        instance._entityQuadtree = new Quadtree<Entity>(MAPSIZE);
+        instance._entityCommunicationHash = new RadialSpatialHash<Entity>(COMMUNICATION_BUCKET_SIZE);
+
+        foreach (Entity entity in Entities)
+        {
+            PollForDataInsertion(entity);
+        }
+
+        DrawDataStructures();
+
+        CleanChunks();
+    }
+    public static void RemoveWallTile(Vector2 position)
+    {
+        if (IsValidPosition(position))
+        {
+            Chunk chunk = Utility.WorldPositionToChunk(position);
+            Vector2 localPosition = Utility.WorldPositionToLocalChunkPosition(position);
+
+            chunk.RemoveWallTile(localPosition);
+        }
+    }
+    public static void SetWallTile(Vector2 position, byte tileIndex)
+    {
+        if (IsValidPosition(position))
+        {
+            Chunk chunk = Utility.WorldPositionToChunk(position);
+            Vector2 localPosition = Utility.WorldPositionToLocalChunkPosition(position);
+
+            chunk.SetWallTile(tileIndex, localPosition);
+        }
+    }
+    public static void SetDirty(Chunk chunk)
+    {
+        if(!instance._dirtyChunks.Contains(chunk))
+            instance._dirtyChunks.Enqueue(chunk);
+    }
     public static List<Entity> GetAllVisibleEntities(Vector2 center, float radius)
     {
         return instance._entityCommunicationHash.Get(center, radius);
@@ -89,17 +130,12 @@ public class MapData {
             instance._entityCommunicationHash.Insert(entity, entity.transform.position, communicableEntity.SizeRadius);
         }
     }
-    public static void Update()
+    private static void CleanChunks()
     {
-        instance._entityQuadtree = new Quadtree<Entity>(MAPSIZE);
-        instance._entityCommunicationHash = new RadialSpatialHash<Entity>(COMMUNICATION_BUCKET_SIZE);
-
-        foreach (Entity entity in Entities)
+        while (instance._dirtyChunks.Count > 0)
         {
-            PollForDataInsertion(entity);
+            ChunkGenerator.RenderChunk(instance._dirtyChunks.Dequeue());
         }
-
-        DrawDataStructures();
     }
     private static void DrawDataStructures()
     {
@@ -148,7 +184,7 @@ public class MapData {
             throw new System.NullReferenceException("Local position " + localPos + " is invalid. Input: " + position);
         }
 
-        byte tileType = chunk.Tiles[(byte)localPos.x, (byte)localPos.y];
+        byte tileType = chunk.TerrainTiles[(byte)localPos.x, (byte)localPos.y];
 
         return TileType.AllTypes[tileType];
     }
