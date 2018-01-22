@@ -29,6 +29,13 @@ public class Game : MonoBehaviour {
         MapData.Update();
         VisionManager.Update();
         DebugMenu.GlobalUpdate();
+
+        #region DEBUG Remove me
+        if(Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            MapData.SetWallTile(Camera.main.ScreenToWorldPoint(Input.mousePosition), WallType.AllTypes[0].ID);
+        }
+        #endregion
     }
     private static void InitializeGame()
     {

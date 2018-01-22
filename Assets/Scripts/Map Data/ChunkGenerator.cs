@@ -38,15 +38,14 @@ public class ChunkGenerator {
         else
         {
             currentMeshFilter = ChunkObjectPool.GetMeshFilter();
+            chunk.AssignGameObject(currentMeshFilter.gameObject);
         }
         
         currentMesh = new Mesh();
         verticeCount = 0;
         materials.Clear();
         triangles.Clear();
-
-        chunk.AssignGameObject(currentMeshFilter.gameObject);
-
+        
         for (int x = 0; x < Chunk.CHUNK_SIZE; x++)
         {
             for (int y = 0; y < Chunk.CHUNK_SIZE; y++)

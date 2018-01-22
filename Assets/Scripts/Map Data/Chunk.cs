@@ -110,6 +110,6 @@ public class Chunk {
     }
     public void SetDirty()
     {
-
+        MapData.SetDirty(this);
     }
 }
