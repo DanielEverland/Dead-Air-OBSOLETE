@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,11 +13,13 @@ public class Chunk {
         this.chunkOffset = chunkOffset;
         this.chunkOffset.z = 0;
 
+        List<TileType> validTileTypes = new List<TileType>(TileType.AllTypes.Where(x => !(x is WallType)));
+
         for (int x = 0; x < CHUNK_SIZE; x++)
         {
             for (int y = 0; y < CHUNK_SIZE; y++)
             {
-                terrainTiles[x, y] = (byte)Mathf.Round((TileType.AllTypes.Count - 1) * GetPerlinValue(x, y));
+                terrainTiles[x, y] = validTileTypes[Mathf.RoundToInt((validTileTypes.Count - 1) * GetPerlinValue(x, y))].ID;
             }
         }
     }
