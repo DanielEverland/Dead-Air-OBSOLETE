@@ -88,6 +88,18 @@ public class MapData {
 
         CleanChunks();
     }
+    public static bool IsPassable(Vector2 position)
+    {
+        if (IsValidPosition(position))
+        {
+            Chunk chunk = Utility.WorldPositionToChunk(position);
+            Vector2 localPosition = Utility.WorldPositionToLocalChunkPosition(position);
+
+            return chunk.WallTiles[(byte)localPosition.x, (byte)localPosition.y].HasValue;
+        }
+
+        return false;
+    }
     public static void RemoveWallTile(Vector2 position)
     {
         if (IsValidPosition(position))
