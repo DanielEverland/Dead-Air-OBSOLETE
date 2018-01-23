@@ -8,8 +8,8 @@ public static class RegionManager {
     private static Dictionary<Vector2, Region> _regionPositions;
     private static List<Region> _regions;
 
-    private static readonly Color DEBUG_SELECTED_REGION_COLOR = new Color(1, 0, 1, 0.1f);
-    private static readonly Color DEBUG_NEIGHBOR_REGION_COLOR = new Color(1, 1, 1, 0.5f);
+    private static readonly Color DEBUG_SELECTED_REGION_COLOR = new Color(1, 0, 1, 0.6f);
+    private static readonly Color DEBUG_NEIGHBOR_REGION_COLOR = new Color(1, 1, 1, 0.6f);
 
     public static void Initialize()
     {
