@@ -27,8 +27,6 @@ public class Game : MonoBehaviour {
     private void Start()
     {
         InitializeGame();
-
-        EG_Debug.DrawRect(new Rect(25, 25, 89, 989), Color.red, 10);
     }
     private void Update()
     {

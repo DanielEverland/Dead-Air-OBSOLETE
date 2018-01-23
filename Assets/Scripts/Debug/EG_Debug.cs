@@ -46,7 +46,17 @@ public static partial class EG_Debug {
     }
     public static void DrawRect(Vector2 center, Vector2 size, Color color, float duration)
     {
-        EG_GL.DrawRect(new Rect(center - size / 2, size), color, duration);
+        Rect rect = new Rect(center - size / 2, size);
+        
+        Debug.DrawLine(rect.min, new Vector2(rect.xMin + rect.width, rect.yMin), color, duration);
+        
+        Debug.DrawLine(new Vector2(rect.xMin + rect.width, rect.yMin), rect.max, color, duration);
+        
+        Debug.DrawLine(new Vector3(rect.xMin, rect.yMin + rect.height), rect.max, color, duration);
+        
+        Debug.DrawLine(rect.min, new Vector3(rect.xMin, rect.yMin + rect.height), color, duration);
+
+        // EG_GL.DrawRect(new Rect(center - size / 2, size), color, duration);
     }
 
     private class EG_DebugGizmos : MonoBehaviour

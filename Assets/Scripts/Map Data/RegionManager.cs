@@ -6,10 +6,16 @@ using UnityEngine;
 public static class RegionManager {
 
     private static Dictionary<Vector2, Region> _regions;
-
+    
     public static void Initialize()
     {
+        Stopwatch stopWatch = new Stopwatch();
+        stopWatch.Start();
+
         ExecuteFullRegeneration();
+
+        stopWatch.Stop();
+        UnityEngine.Debug.Log(stopWatch.Elapsed);
     }
     private static void ExecuteFullRegeneration()
     {
@@ -26,27 +32,23 @@ public static class RegionManager {
             }
         }
     }
-    private static Region Create(Vector2 position, bool addToList = true)
+    private static Region Create(Vector2 position)
     {
+        Region region = new Region(position);
         Queue<Vector2> queue = new Queue<Vector2>();
         HashSet<Vector2> checkedPositions = new HashSet<Vector2>();
 
         Vector2 anchor = Utility.WorldPositionToRegionPosition(position);
         Vector2 anchorDelta = position - anchor;
-        Vector2 maxSize = new Vector2(Region.SIZE - anchorDelta.x + 1, Region.SIZE - anchorDelta.y + 1);
-
-        Vector2 size = new Vector2();
-        
+        Vector2 maxSize = new Vector2(Region.MAX_SIZE - anchorDelta.x, Region.MAX_SIZE - anchorDelta.y);
+                
         queue.Enqueue(position);
         while (queue.Count > 0)
         {
             Vector2 current = queue.Dequeue();
-            checkedPositions.Add(current);
             
-            Vector2 delta = current - position;
-
-            size.x = Mathf.Max(size.x, delta.x);
-            size.y = Mathf.Max(size.y, delta.y);
+            region.Allocate(current);
+            _regions.Add(current, region);
 
             for (int x = -1; x <= 1; x++)
             {
@@ -56,52 +58,55 @@ public static class RegionManager {
                     Vector2 loopDelta = loopPos - position;
 
                     if (loopDelta.x >= 0 && loopDelta.y >= 0 && loopDelta.x < maxSize.x && loopDelta.y < maxSize.y
-                        && !checkedPositions.Contains(loopPos) && !queue.Contains(loopPos))
+                        && !checkedPositions.Contains(loopPos) && !queue.Contains(loopPos) && !_regions.ContainsKey(loopPos))
                     {
                         queue.Enqueue(loopPos);
+                        checkedPositions.Add(loopPos);
                     }
                 }
             }
         }
-
-        Region region = new Region(position, size);
-
-        if (addToList)
-            Add(region);
-
+        
         return region;
     }
     private static bool Contains(Vector2 position)
     {
-        Vector2 anchor = Utility.WorldPositionToRegionPosition(position);
-
-        for (int x = 0; x < Region.SIZE; x++)
+        Vector2 floored = new Vector2()
         {
-            for (int y = 0; y < Region.SIZE; y++)
-            {
-                Vector2 currentPosition = anchor + new Vector2(x, y);
+            x = Mathf.FloorToInt(position.x),
+            y = Mathf.FloorToInt(position.y),
+        };
 
-                if(_regions.ContainsKey(currentPosition))
-                {
-                    if (_regions[currentPosition].Contains(position))
-                        return true;
-                }
-            }
-        }
-
-        return false;
+        return _regions.ContainsKey(floored);
     }
-    private static void Add(Region region)
+    public static Region GetRegion(Vector2 position)
     {
-        _regions.Add(region.Position, region);
+        Vector2 floored = new Vector2()
+        {
+            x = Mathf.FloorToInt(position.x),
+            y = Mathf.FloorToInt(position.y),
+        };
+
+        if(_regions.ContainsKey(floored))
+        {
+            return _regions[floored];
+        }
+        else
+        {
+            return null;
+        }
     }
     public static void Draw()
     {
         if (DebugData.RegionsDrawAll)
         {
-            foreach (Region region in _regions.Values)
+            Vector2 mousePosInWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+            if (Contains(mousePosInWorld))
             {
-                EG_Debug.DrawRect(new Rect(region.Position, region.Size), Color.white);
+                Region region = GetRegion(mousePosInWorld);
+                EG_Debug.DrawRect(new Rect(region.Position, Vector2.one * Region.MAX_SIZE), Color.white);
+                UnityEngine.Debug.DrawLine(mousePosInWorld, region.Position);
             }
         }
     }

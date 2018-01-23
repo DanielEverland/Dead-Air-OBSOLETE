@@ -55,6 +55,7 @@ public class EG_GL : MonoBehaviour
         GL.Color(RECT_COLOR_BUFFER[index]);
 
         Rect rect = RECT_OBJECT_BUFFER[index];
+        Debug.Log(rect);
 
         //TOP
         GL.Vertex(rect.min);

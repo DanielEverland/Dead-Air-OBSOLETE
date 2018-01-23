@@ -70,7 +70,7 @@ public static class Utility {
     }
     public static Vector2 WorldPositionToRegionPosition(Vector3 position)
     {
-        return new Vector2(Mathf.FloorToInt(position.x / Region.SIZE) * Region.SIZE, Mathf.FloorToInt(position.y / Region.SIZE) * Region.SIZE);
+        return new Vector2(Mathf.FloorToInt(position.x / Region.MAX_SIZE) * Region.MAX_SIZE, Mathf.FloorToInt(position.y / Region.MAX_SIZE) * Region.MAX_SIZE);
     }
     public static Chunk WorldPositionToChunk(Vector3 position)
     {
