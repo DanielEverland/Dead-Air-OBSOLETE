@@ -95,7 +95,7 @@ public class MapData {
             Chunk chunk = Utility.WorldPositionToChunk(position);
             Vector2 localPosition = Utility.WorldPositionToLocalChunkPosition(position);
 
-            return chunk.WallTiles[(byte)localPosition.x, (byte)localPosition.y].HasValue;
+            return TileType.AllTypes[chunk.GetChunkTile((byte)localPosition.x, (byte)localPosition.y)].IsPassable;
         }
 
         return false;

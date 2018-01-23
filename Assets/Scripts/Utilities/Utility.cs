@@ -68,6 +68,10 @@ public static class Utility {
             new Vector2(center.x - size.x / 2, center.y - size.y / 2),
         };
     }
+    public static Vector2 WorldPositionToRegionPosition(Vector3 position)
+    {
+        return new Vector2(Mathf.FloorToInt(position.x / Region.SIZE) * Region.SIZE, Mathf.FloorToInt(position.y / Region.SIZE) * Region.SIZE);
+    }
     public static Chunk WorldPositionToChunk(Vector3 position)
     {
         return MapData.Chunks[WorldPositionToChunkPosition(position)];

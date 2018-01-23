@@ -13,3 +13,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _appearance: {fileID: 21300004, guid: cb338fdc59edea04f82802b72a21a175, type: 3}
   _isSpawnable: 0
+  _isPassable: 1

@@ -10,10 +10,16 @@ public class Game : MonoBehaviour {
     
     private static List<Action> LoadFlow = new List<Action>()
     {
+        //Data Initialization
         EG_Debug.Initialize,
         TileType.LoadAllTileTypes,
+
+        //Map Generation
         ChunkGenerator.Initialize,
         MapDataManager.Initialize,
+        RegionManager.Initialize,
+
+        //Scene Initialization
         PlayerCamera.Center,
         DebugManager.Initialize,
     };

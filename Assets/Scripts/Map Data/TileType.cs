@@ -27,6 +27,7 @@ public class TileType : ScriptableObject {
         }
     }
     
+    public bool IsPassable { get { return _isPassable; } set { _isPassable = value; } }
     public bool IsSpawnable { get { return _isSpawnable; } set { _isSpawnable = value; } }
     public byte ID { get; private set; }
     public Sprite Sprite { get { return _appearance; } }
@@ -58,6 +59,8 @@ public class TileType : ScriptableObject {
     private Sprite _appearance;
     [SerializeField]
     private bool _isSpawnable;
+    [SerializeField]
+    private bool _isPassable;
 
     private void Load()
     {
