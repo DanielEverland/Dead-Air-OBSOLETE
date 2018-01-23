@@ -27,8 +27,11 @@
     public static bool SpatialHashDrawObjects { get; set; }
     #endregion
 
-    #region
-    [EG_Debug.Toggle("Data Structures", "Draw All Regions", true, Header = "Regions")]
-    public static bool RegionsDrawAll { get; set; }
+    #region Regions
+    [EG_Debug.Toggle("Data Structures", "Draw All Region Bounds", true, Header = "Regions")]
+    public static bool RegionsDrawAllBounds { get; set; }
+
+    [EG_Debug.Toggle("Data Structures", "Draw Selected Region", true, Header = "Regions")]
+    public static bool RegionsDrawSelected { get; set; }
     #endregion
 }

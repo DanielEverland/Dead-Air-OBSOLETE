@@ -33,6 +33,7 @@ public class Game : MonoBehaviour {
         MapData.Update();
         VisionManager.Update();
         DebugMenu.GlobalUpdate();
+        RegionManager.Update();
 
         #region DEBUG Remove me
         if(Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Mouse0))

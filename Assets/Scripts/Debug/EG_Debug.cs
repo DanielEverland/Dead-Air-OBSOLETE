@@ -24,6 +24,30 @@ public static partial class EG_Debug {
     {
         gizmosInstance.AddEntry(new EG_DebugGizmos.SphereEntry(center, radius, duration, color));
     }
+    public static void DrawSquare(Vector2 center, Vector2 size)
+    {
+        DrawSquare(center, size, Color.white);
+    }
+    public static void DrawSquare(Vector2 center, Vector2 size, Color color)
+    {
+        DrawSquare(center, size, color, 0);
+    }
+    public static void DrawSquare(Vector2 center, Vector2 size, Color color, float duration)
+    {
+        DrawSquare(new Rect(center - size / 2, size), color, duration);
+    }
+    public static void DrawSquare(Rect rect)
+    {
+        DrawSquare(rect, Color.white);
+    }
+    public static void DrawSquare(Rect rect, Color color)
+    {
+        DrawSquare(rect, color, 0);
+    }
+    public static void DrawSquare(Rect rect, Color color, float duration)
+    {
+        EG_GL.DrawRect(rect, color, duration, true);
+    }
     public static void DrawRect(Rect rect)
     {
         DrawRect(rect, Color.white);
@@ -46,17 +70,7 @@ public static partial class EG_Debug {
     }
     public static void DrawRect(Vector2 center, Vector2 size, Color color, float duration)
     {
-        Rect rect = new Rect(center - size / 2, size);
-        
-        Debug.DrawLine(rect.min, new Vector2(rect.xMin + rect.width, rect.yMin), color, duration);
-        
-        Debug.DrawLine(new Vector2(rect.xMin + rect.width, rect.yMin), rect.max, color, duration);
-        
-        Debug.DrawLine(new Vector3(rect.xMin, rect.yMin + rect.height), rect.max, color, duration);
-        
-        Debug.DrawLine(rect.min, new Vector3(rect.xMin, rect.yMin + rect.height), color, duration);
-
-        // EG_GL.DrawRect(new Rect(center - size / 2, size), color, duration);
+        EG_GL.DrawRect(new Rect(center - size / 2, size), color, duration, false);
     }
 
     private class EG_DebugGizmos : MonoBehaviour

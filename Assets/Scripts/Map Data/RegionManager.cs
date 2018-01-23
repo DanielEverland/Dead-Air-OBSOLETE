@@ -1,25 +1,27 @@
-﻿using System.Diagnostics;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public static class RegionManager {
 
-    private static Dictionary<Vector2, Region> _regions;
-    
+    private static Dictionary<Vector2, Region> _regionPositions;
+    private static List<Region> _regions;
+
+    private static readonly Color DEBUG_SELECTED_REGION_COLOR = new Color(1, 0, 1, 0.1f);
+    private static readonly Color DEBUG_NEIGHBOR_REGION_COLOR = new Color(1, 1, 1, 0.5f);
+
     public static void Initialize()
     {
-        Stopwatch stopWatch = new Stopwatch();
-        stopWatch.Start();
-
         ExecuteFullRegeneration();
-
-        stopWatch.Stop();
-        UnityEngine.Debug.Log(stopWatch.Elapsed);
+    }
+    public static void Update()
+    {
+        Region.CleanDirtyRegions();
     }
     private static void ExecuteFullRegeneration()
     {
-        _regions = new Dictionary<Vector2, Region>();
+        _regionPositions = new Dictionary<Vector2, Region>();
+        _regions = new List<Region>();
 
         for (int x = 0; x < MapData.MAPSIZE; x++)
         {
@@ -48,7 +50,7 @@ public static class RegionManager {
             Vector2 current = queue.Dequeue();
             
             region.Allocate(current);
-            _regions.Add(current, region);
+            _regionPositions.Add(current, region);
 
             for (int x = -1; x <= 1; x++)
             {
@@ -58,7 +60,7 @@ public static class RegionManager {
                     Vector2 loopDelta = loopPos - position;
 
                     if (loopDelta.x >= 0 && loopDelta.y >= 0 && loopDelta.x < maxSize.x && loopDelta.y < maxSize.y
-                        && !checkedPositions.Contains(loopPos) && !queue.Contains(loopPos) && !_regions.ContainsKey(loopPos))
+                        && !checkedPositions.Contains(loopPos) && !queue.Contains(loopPos) && !_regionPositions.ContainsKey(loopPos))
                     {
                         queue.Enqueue(loopPos);
                         checkedPositions.Add(loopPos);
@@ -66,7 +68,9 @@ public static class RegionManager {
                 }
             }
         }
-        
+
+        _regions.Add(region);
+
         return region;
     }
     private static bool Contains(Vector2 position)
@@ -77,7 +81,7 @@ public static class RegionManager {
             y = Mathf.FloorToInt(position.y),
         };
 
-        return _regions.ContainsKey(floored);
+        return _regionPositions.ContainsKey(floored);
     }
     public static Region GetRegion(Vector2 position)
     {
@@ -87,9 +91,9 @@ public static class RegionManager {
             y = Mathf.FloorToInt(position.y),
         };
 
-        if(_regions.ContainsKey(floored))
+        if(_regionPositions.ContainsKey(floored))
         {
-            return _regions[floored];
+            return _regionPositions[floored];
         }
         else
         {
@@ -98,15 +102,26 @@ public static class RegionManager {
     }
     public static void Draw()
     {
-        if (DebugData.RegionsDrawAll)
+        if (DebugData.RegionsDrawAllBounds)
+        {
+            foreach (Region region in _regions)
+            {
+                EG_Debug.DrawRect(region.Bounds, Color.white);
+            }
+        }
+
+        if (DebugData.RegionsDrawSelected)
         {
             Vector2 mousePosInWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
             if (Contains(mousePosInWorld))
             {
                 Region region = GetRegion(mousePosInWorld);
-                EG_Debug.DrawRect(new Rect(region.Position, Vector2.one * Region.MAX_SIZE), Color.white);
-                UnityEngine.Debug.DrawLine(mousePosInWorld, region.Position);
+
+                foreach (Vector2 pos in region.OwnedPositions)
+                {
+                    EG_Debug.DrawSquare(new Rect(pos, Vector2.one), DEBUG_SELECTED_REGION_COLOR);
+                }
             }
         }
     }

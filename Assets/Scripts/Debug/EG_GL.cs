@@ -8,12 +8,8 @@ public class EG_GL : MonoBehaviour
 
     private static Material _currentMaterial;
 
-    private static List<short> RECT_REMAINING_INDEXES = new List<short>();
-
-    private static Rect[] RECT_OBJECT_BUFFER = new Rect[short.MaxValue];
-    private static Color[] RECT_COLOR_BUFFER = new Color[short.MaxValue];
-    private static float[] RECT_DURATION_BUFFER = new float[short.MaxValue];
-    private static short RECT_INDEX = -1;
+    private static LinkedList<DrawCall> _drawQueue = new LinkedList<DrawCall>();
+    private static LinkedList<DrawCall> _toDraw = new LinkedList<DrawCall>();
 
     private void Awake()
     {
@@ -21,91 +17,106 @@ public class EG_GL : MonoBehaviour
         
         glCamera = GetComponent<Camera>();
     }
+    public static void DrawRect(Rect rect, Color color, float duration, bool isFilled)
+    {
+        _toDraw.AddLast(new RectObject(rect, color, isFilled, duration));
+    }
     private void LateUpdate()
     {
         glCamera.orthographicSize = Camera.main.orthographicSize;
-    }
-    public static void DrawRect(Rect rect, Color color, float duration)
-    {
-        RECT_INDEX++;
-
-        RECT_OBJECT_BUFFER[RECT_INDEX] = rect;
-        RECT_COLOR_BUFFER[RECT_INDEX] = color;
-        RECT_DURATION_BUFFER[RECT_INDEX] = duration;
     }
     private void OnPostRender()
     {
         GL.PushMatrix();
         _currentMaterial.SetPass(0);
 
-        GL.Begin(GL.LINES);
-        for (short i = 0; i < RECT_INDEX; i++)
+        foreach (DrawCall drawCall in _toDraw)
         {
-            DrawRect(i);
+            drawCall.Draw();
         }
-        GL.End();
-
+        
         GL.PopMatrix();
 
-        Clear();
-        AddRemainingObjects();
+        _toDraw = new LinkedList<DrawCall>(_drawQueue);
+        _drawQueue.Clear();
     }
-    private void DrawRect(short index)
+
+    private abstract class DrawCall
     {
-        GL.Color(RECT_COLOR_BUFFER[index]);
-
-        Rect rect = RECT_OBJECT_BUFFER[index];
-        Debug.Log(rect);
-
-        //TOP
-        GL.Vertex(rect.min);
-        GL.Vertex(new Vector2(rect.xMin + rect.width, rect.yMin));
-
-        //RIGHT
-        GL.Vertex(new Vector2(rect.xMin + rect.width, rect.yMin));
-        GL.Vertex(rect.max);
-
-        //BOTTOM
-        GL.Vertex(new Vector3(rect.xMin, rect.yMin + rect.height));
-        GL.Vertex(rect.max);
-
-        //LEFT
-        GL.Vertex(rect.min);
-        GL.Vertex(new Vector3(rect.xMin, rect.yMin + rect.height));
-
-        RECT_DURATION_BUFFER[index] -= Time.unscaledDeltaTime;
-
-        if (RECT_DURATION_BUFFER[index] > 0)
-            RECT_REMAINING_INDEXES.Add(index);
-    }
-    private void Clear()
-    {
-        RECT_INDEX = -1;
-    }
-    private void AddRemainingObjects()
-    {
-        while (RECT_REMAINING_INDEXES.Count > 0)
+        public DrawCall(float duration)
         {
-            RECT_INDEX++;
-
-            if (RECT_REMAINING_INDEXES.Contains(RECT_INDEX))
-            {
-                if (RECT_INDEX == RECT_REMAINING_INDEXES[0])
-                    RECT_REMAINING_INDEXES.RemoveAt(0);
-
-                break;
-            }
-
-            RECT_OBJECT_BUFFER[RECT_INDEX] = RECT_OBJECT_BUFFER[RECT_REMAINING_INDEXES[0]];
-            RECT_COLOR_BUFFER[RECT_INDEX] = RECT_COLOR_BUFFER[RECT_REMAINING_INDEXES[0]];
-            RECT_DURATION_BUFFER[RECT_INDEX] = RECT_DURATION_BUFFER[RECT_REMAINING_INDEXES[0]];
-
-            RECT_REMAINING_INDEXES.RemoveAt(0);
+            _duration = duration;
         }
-    }
 
-    public enum GL_Materials
+        public float Duration { get { return _duration; } }
+
+        private float _duration;
+
+        public void Draw()
+        {
+            DoDraw();
+
+            _duration -= Time.unscaledDeltaTime;
+
+            if(_duration > 0)
+                _drawQueue.AddLast(this);
+        }
+        protected abstract void DoDraw();
+    }
+    private class RectObject : DrawCall
     {
-        Unlit,
+        public RectObject(Rect rect, Color color, bool isFilled, float duration) : base(duration)
+        {
+            _rect = rect;
+            _color = color;
+            _isFilled = isFilled;
+        }
+
+        private Rect _rect;
+        private Color _color;
+        private bool _isFilled;
+
+        protected override void DoDraw()
+        {
+            if (_isFilled)
+                DrawFilled();
+            else
+                DrawOutline();
+        }
+        private void DrawFilled()
+        {
+            GL.Begin(GL.QUADS);
+            GL.Color(_color);
+
+            GL.Vertex(_rect.min);
+            GL.Vertex(_rect.min + new Vector2(_rect.width, 0));
+            GL.Vertex(_rect.max);
+            GL.Vertex(_rect.min + new Vector2(0, _rect.height));
+
+            GL.End();
+        }
+        private void DrawOutline()
+        {
+            GL.Begin(GL.LINES);
+            GL.Color(_color);
+
+            //Top
+            GL.Vertex(_rect.min);
+            GL.Vertex(_rect.min + new Vector2(_rect.width, 0));
+
+            //Right
+            GL.Vertex(_rect.min + new Vector2(_rect.width, 0));
+            GL.Vertex(_rect.max);
+
+            //Bottom
+            GL.Vertex(_rect.min + new Vector2(0, _rect.height));
+            GL.Vertex(_rect.max);
+
+            //Left
+            GL.Vertex(_rect.min);
+            GL.Vertex(_rect.min + new Vector2(0, _rect.height));
+
+            GL.End();
+        }
     }
 }
