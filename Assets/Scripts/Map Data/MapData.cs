@@ -153,6 +153,7 @@ public class MapData {
     {
         EntityQuadtree.Draw();
         instance._entityCommunicationHash.Draw();
+        RegionManager.Draw();
     }
     public static Entity CreateEntity<T>() where T : Entity
     {

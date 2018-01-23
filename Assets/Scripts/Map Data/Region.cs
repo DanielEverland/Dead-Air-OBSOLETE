@@ -12,11 +12,15 @@ public class Region {
     {
         _position = position;
         _size = size;
+
+        if (size == Vector2.zero)
+            throw new System.ArgumentException("Region size must be greater than 0. Parsed size was " + size);
     }
 
-    public const int SIZE = 32;
+    public const int SIZE = 8;
 
     public Vector2 Position { get { return _position; } }
+    public Vector2 Size { get { return _size; } }
 
     private readonly Vector2 _position;
 

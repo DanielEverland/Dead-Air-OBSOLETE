@@ -5,6 +5,7 @@
 
 
 
+    #region Quadtree
     [EG_Debug.Toggle("Data Structures", "Draw All Rects", false, Header = "Quadtree")]
     public static bool QuadtreeDrawAllRects { get; set; }
 
@@ -13,8 +14,9 @@
 
     [EG_Debug.Toggle("Data Structures", "Draw Objects", false, Header = "Quadtree")]
     public static bool QuadtreeDrawObjects { get; set; }
+    #endregion
 
-
+    #region Spatial Hash
     [EG_Debug.Toggle("Data Structures", "Draw All Buckets", false, Header = "SpatialHash")]
     public static bool SpatialHashDrawAllBuckets { get; set; }
 
@@ -23,4 +25,10 @@
 
     [EG_Debug.Toggle("Data Structures", "Draw Objects", false, Header = "SpatialHash")]
     public static bool SpatialHashDrawObjects { get; set; }
+    #endregion
+
+    #region
+    [EG_Debug.Toggle("Data Structures", "Draw All Regions", true, Header = "Regions")]
+    public static bool RegionsDrawAll { get; set; }
+    #endregion
 }
