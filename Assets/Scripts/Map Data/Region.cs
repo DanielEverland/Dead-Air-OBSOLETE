@@ -7,35 +7,35 @@ public class Region {
 
     public Region()
     {
-        SetDirty();
+        FlagForReinitialization();
     }
     public Region(Vector2 position)
     {
-        _position = position;
+        _anchor = Utility.WorldPositionToRegionPosition(position);
 
-        SetDirty();
+        FlagForReinitialization();
     }
 
     public const int MAX_SIZE = 8;
 
-    private static Queue<Region> _dirtyRegions = new Queue<Region>();
+    private static Queue<Region> _regionsToInitialize = new Queue<Region>();
 
     public Rect Bounds { get { return _bounds; } }
-    public Vector2 Position { get { return _position; } }
+    public Vector2 Position { get { return Bounds.position; } }
     public int CellCount { get { return _ownedPositions.Count; } }
     public IEnumerable<Vector2> OwnedPositions { get { return _ownedPositions; } }
 
-    private readonly Vector2 _position;
+    private readonly Vector2 _anchor;
 
     private List<Vector2> _ownedPositions = new List<Vector2>();
     private Rect _bounds;
 
     public void Allocate(Vector2 position)
     {
-        Vector2 delta = position - this.Position;
+        Vector2 delta = position - _anchor;
 
         if (delta.x < 0 || delta.y < 0 || delta.x >= MAX_SIZE || delta.y >= MAX_SIZE)
-            throw new System.IndexOutOfRangeException();
+            throw new System.IndexOutOfRangeException(delta + " - " + position);
 
         _ownedPositions.Add(position);
     }
@@ -45,29 +45,32 @@ public class Region {
 
         return delta.x >= 0 && delta.y >= 0 && delta.x < MAX_SIZE && delta.y < MAX_SIZE;
     }
-    public void SetDirty()
+    public void FlagForReinitialization()
     {
-        if (!_dirtyRegions.Contains(this))
-            _dirtyRegions.Enqueue(this);
+        if (!_regionsToInitialize.Contains(this))
+            _regionsToInitialize.Enqueue(this);
     }
-    private void Clean()
+    private void Initialize()
     {
         RecalculateBounds();
     }
     private void RecalculateBounds()
     {
+        if (_ownedPositions.Count <= 0)
+            return;
+
+        float xMin = _ownedPositions.Min(x => x.x);
+        float yMin = _ownedPositions.Min(x => x.y);
         float xMax = _ownedPositions.Max(x => x.x) + 1;
         float yMax = _ownedPositions.Max(x => x.y) + 1;
-
-        Vector2 size = new Vector2(xMax - _position.x, yMax - _position.y);
-
-        _bounds = new Rect(_position, size);
+        
+        _bounds = new Rect(xMin, yMin, xMax - xMin, yMax - yMin);
     }
-    public static void CleanDirtyRegions()
+    public static void InitializeRegions()
     {
-        while (_dirtyRegions.Count > 0)
+        while (_regionsToInitialize.Count > 0)
         {
-            _dirtyRegions.Dequeue().Clean();
+            _regionsToInitialize.Dequeue().Initialize();
         }
     }
     public override bool Equals(object obj)
@@ -76,17 +79,17 @@ public class Region {
         {
             Region other = obj as Region;
             
-            return other._position == this._position && other._ownedPositions == this._ownedPositions;
+            return other._ownedPositions == this._ownedPositions;
         }
 
         return false;
     }
     public override int GetHashCode()
     {
-        return _position.GetHashCode();
+        return _ownedPositions.GetHashCode();
     }
     public override string ToString()
     {
-        return string.Format("{0} - ({1})", _position, _ownedPositions.Count);
+        return string.Format("{0} - ({1})", Bounds, _ownedPositions.Count);
     }
 }

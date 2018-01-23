@@ -118,6 +118,7 @@ public class MapData {
             Vector2 localPosition = Utility.WorldPositionToLocalChunkPosition(position);
 
             chunk.SetWallTile(tileIndex, localPosition);
+            RegionManager.SetDirty(position);
         }
     }
     public static void SetDirty(Chunk chunk)

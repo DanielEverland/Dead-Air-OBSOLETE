@@ -71,8 +71,8 @@ public static class Extensions {
     {
         return new Vector2()
         {
-            x = Mathf.RoundToInt(position.x),
-            y = Mathf.RoundToInt(position.y),
+            x = Mathf.FloorToInt(position.x),
+            y = Mathf.FloorToInt(position.y),
         };
     }
     public static void ForEach<T>(this IEnumerable<T> enumeration, System.Action<T> action)
