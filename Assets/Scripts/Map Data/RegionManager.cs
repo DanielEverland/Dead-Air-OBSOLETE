@@ -8,6 +8,7 @@ public static class RegionManager {
     private static Dictionary<Vector2, Region> _regionPositions;
     private static List<Region> _regions;
 
+    private static readonly Color DEBUG_REGION_EDGE_COLOR = new Color(0, 1, 1, 0.3f);
     private static readonly Color DEBUG_SELECTED_REGION_COLOR = new Color(1, 0, 1, 0.6f);
     private static readonly Color DEBUG_NEIGHBOR_REGION_COLOR = new Color(1, 1, 1, 0.6f);
 
@@ -173,12 +174,27 @@ public static class RegionManager {
             if (Contains(mousePosInWorld))
             {
                 Region region = GetRegion(mousePosInWorld);
-
+                
                 foreach (Vector2 pos in region.OwnedPositions)
                 {
                     EG_Debug.DrawSquare(new Rect(pos, Vector2.one), DEBUG_SELECTED_REGION_COLOR);
                 }
+
+                if(DebugData.RegionsDrawEdges)
+                {
+                    foreach (Region.RegionConnection connection in region.Connections)
+                    {
+                        Vector2 pos = connection.Position;
+                        Vector2 size = new Vector2((connection.Normal.x == 0) ? 1 : connection.Normal.x * connection.Length, (connection.Normal.y == 0) ? 1 : connection.Normal.y * connection.Length);
+
+                        Rect rect = new Rect(pos, size);
+
+                        EG_Debug.DrawSquare(rect, DEBUG_REGION_EDGE_COLOR);
+                        EG_Debug.DrawRect(rect, Color.black);
+                    }
+                }
             }
         }
     }
+    
 }

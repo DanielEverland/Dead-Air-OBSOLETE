@@ -34,6 +34,9 @@
     [EG_Debug.Toggle("Data Structures", "Draw Selected Region", true, Header = "Regions")]
     public static bool RegionsDrawSelected { get; set; }
 
+    [EG_Debug.Toggle("Data Structures", "Draw Selected Regions Edges", true, Header = "Regions")]
+    public static bool RegionsDrawEdges { get; set; }
+
     [EG_Debug.Toggle("Data Structures", "Draw Region Flood Fill", false, Header = "Regions")]
     public static bool RegionsFloodFillDebug { get; set; }
     #endregion

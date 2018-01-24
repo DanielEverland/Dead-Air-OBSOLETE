@@ -211,6 +211,8 @@ public class MapData {
     {
         _entities = new List<Entity>();
 
+
+        return;
         CreateColonists();
         CreateZombies();
     }
