@@ -5,21 +5,22 @@ using UnityEngine;
 
 public class Region
 {
-
     public Region()
     {
-        FlagForReinitialization();
+        _id = System.Guid.NewGuid();
+        
+        SetDirty(false);
     }
     public Region(Vector2 position)
     {
         _anchor = Utility.WorldPositionToRegionPosition(position);
+        _id = System.Guid.NewGuid();
 
-        FlagForReinitialization();
+        SetDirty(false);
     }
 
     public const int MAX_SIZE = 16;
-
-    private static Dictionary<RegionConnection, List<Region>> _regionConnections = new Dictionary<RegionConnection, List<Region>>();
+    
     private static Queue<Region> _regionsToInitialize = new Queue<Region>();
     private static readonly List<Vector2> _directions = new List<Vector2> { Vector2.left, Vector2.right, Vector2.down, Vector2.up };
 
@@ -27,30 +28,28 @@ public class Region
     public Vector2 Position { get { return Bounds.position; } }
     public int CellCount { get { return _ownedPositions.Count; } }
     public IEnumerable<Vector2> OwnedPositions { get { return _ownedPositions; } }
-    public IEnumerable<RegionConnection> Connections { get { return _connections; } }
+    public IEnumerable<Connection> Connections { get { return _connections; } }
     public int ConnectionCount { get { return _connections.Count; } }
-
     public IEnumerable<Region> Neighbors
     {
         get
         {
-            List<Region> toReturn = new List<Region>();
+            if (_neighbors == null)
+                CacheNeighbors();
 
-            for (int i = 0; i < _connections.Count; i++)
-            {
-                toReturn.AddRange(_regionConnections[_connections[i]]);
-            }
-
-            return toReturn;
+            return _neighbors;
         }
     }
 
     private readonly Vector2 _anchor;
 
-    private List<RegionConnection> _connections = new List<RegionConnection>();
+    private HashSet<Connection> _connections = new HashSet<Connection>();
     private List<Vector2> _ownedPositions = new List<Vector2>();
+    private List<Region> _neighbors;
+    private HashSet<Vector2> blackList;
     private Rect _bounds;
-    private bool _isDirty;
+    private bool _isDirty = false;
+    private System.Guid _id;
 
     public void Allocate(Vector2 position)
     {
@@ -67,24 +66,54 @@ public class Region
 
         return delta.x >= 0 && delta.y >= 0 && delta.x < MAX_SIZE && delta.y < MAX_SIZE;
     }
-    public void FlagForReinitialization()
+    public void SetDirty(bool flagNeighbors)
     {
-        if (!_regionsToInitialize.Contains(this) && !_isDirty)
+        if(!_regionsToInitialize.Contains(this) && !_isDirty)
         {
             _isDirty = true;
             _regionsToInitialize.Enqueue(this);
+        }        
+
+        if (flagNeighbors)
+        {
+            foreach (Region neighbor in Neighbors)
+            {
+                neighbor.SetDirty(false);
+            }
         }
     }
-    private void Initialize()
+    public void Initialize()
     {
         RecalculateBounds();
         RecalculateConnections();
+    }
+    private void Clean()
+    {
+        RecalculateBounds();
+        RecalculateConnections();
+        CacheNeighbors();
 
         _isDirty = false;
     }
-    private HashSet<Vector2> blackList = new HashSet<Vector2>();
+    private void CacheNeighbors()
+    {
+        _neighbors = new List<Region>();
+
+        foreach (int connection in _connections)
+        {
+            foreach (Region region in RegionConnectionManager.GetRegions(connection))
+            {
+                if (region != this && !_neighbors.Contains(region))
+                    _neighbors.Add(region);
+            }
+        }
+    }
     private void RecalculateConnections()
     {
+        RegionConnectionManager.Remove(this);
+        _connections = new HashSet<Connection>();
+        blackList = new HashSet<Vector2>();
+
         List<Vector2> positionsToCheck = new List<Vector2>(_ownedPositions);
 
         while (positionsToCheck.Count > 0)
@@ -98,6 +127,8 @@ public class Region
                     CreateConnection(position, _directions[i]);
             }
         }
+
+        RegionConnectionManager.Add(this);
     }
     private void CreateConnection(Vector2 startPosition, Vector2 edgeDirection)
     {
@@ -107,7 +138,7 @@ public class Region
         HashSet<Vector2> usedPositions = new HashSet<Vector2>();
 
         Vector2 offset = GetOffset(edgeDirection);
-        RegionConnection.Direction regionDirection = GetRegionDirection(edgeDirection);
+        Connection.Direction regionDirection = GetRegionDirection(edgeDirection);
         Vector2 travelDirection = GetTravelDirection(edgeDirection);
 
         Vector2? currentPosition = startPosition;
@@ -142,14 +173,14 @@ public class Region
             }
         }
 
-        AddConnection(new RegionConnection((short)(min.x + offset.x), (short)(min.y + offset.y), length, regionDirection));
+        AddConnection(new Connection((short)(min.x + offset.x), (short)(min.y + offset.y), length, regionDirection));
     }
-    private RegionConnection.Direction GetRegionDirection(Vector2 edgeDirection)
+    private Connection.Direction GetRegionDirection(Vector2 edgeDirection)
     {
         if (edgeDirection == Vector2.right || edgeDirection == Vector2.left)
-            return RegionConnection.Direction.Up;
+            return Connection.Direction.Up;
         if (edgeDirection == Vector2.up || edgeDirection == Vector2.down)
-            return RegionConnection.Direction.Right;
+            return Connection.Direction.Right;
 
         throw new System.Exception("Cannot get region directions");
     }
@@ -179,20 +210,10 @@ public class Region
 
         return Vector2.zero;
     }
-    private void AddConnection(RegionConnection regionConnection)
+    private void AddConnection(Connection regionConnection)
     {
-        _connections.Add(regionConnection);
-
-        if (!_regionConnections.ContainsKey(regionConnection))
-            _regionConnections.Add(regionConnection, new List<Region>());
-
-        _regionConnections[regionConnection].Add(this);
-    }
-    private void RemoveConnection(RegionConnection regionConnection)
-    {
-        _regionConnections[regionConnection].Remove(this);
-
-        _connections.Remove(regionConnection);
+        if(!_connections.Contains(regionConnection))
+            _connections.Add(regionConnection);
     }
     private void RecalculateBounds()
     {
@@ -206,11 +227,11 @@ public class Region
 
         _bounds = new Rect(xMin, yMin, xMax - xMin, yMax - yMin);
     }
-    public static void InitializeRegions()
+    public static void CleanDirtyRegions()
     {
         while (_regionsToInitialize.Count > 0)
         {
-            _regionsToInitialize.Dequeue().Initialize();
+            _regionsToInitialize.Dequeue().Clean();
         }
     }
     public override bool Equals(object obj)
@@ -219,22 +240,22 @@ public class Region
         {
             Region other = obj as Region;
 
-            return other._ownedPositions == this._ownedPositions;
+            return _id.Equals(other._id);
         }
 
         return false;
     }
     public override int GetHashCode()
     {
-        return _ownedPositions.GetHashCode();
+        return _id.GetHashCode();
     }
     public override string ToString()
     {
-        return string.Format("{0} - ({1})", Bounds, _ownedPositions.Count);
+        return string.Format("{0} - ({1}) - [{2}]", Bounds, _ownedPositions.Count, _id);
     }
-    public struct RegionConnection
+    public struct Connection
     {
-        public RegionConnection(short x, short y, byte length, Direction direction)
+        public Connection(short x, short y, byte length, Direction direction)
         {
             _hash = new { x, y, length, direction }.GetHashCode();
             _x = x;
@@ -261,6 +282,10 @@ public class Region
         {
             Right = 0,
             Up = 1,
+        }
+        public static implicit operator int(Connection connection)
+        {
+            return connection._hash;
         }
     }
 }

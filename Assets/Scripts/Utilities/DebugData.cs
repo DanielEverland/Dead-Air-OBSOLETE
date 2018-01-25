@@ -39,5 +39,8 @@
 
     [EG_Debug.Toggle("Data Structures", "Draw Region Flood Fill", false, Header = "Regions")]
     public static bool RegionsFloodFillDebug { get; set; }
+
+    [EG_Debug.Toggle("Data Structures", "Draw Neighbors", true, Header = "Regions")]
+    public static bool RegionsDrawNeighbors { get; set; }
     #endregion
 }

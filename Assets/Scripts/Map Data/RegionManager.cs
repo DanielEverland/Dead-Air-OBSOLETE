@@ -4,9 +4,11 @@ using UnityEngine;
 
 public static class RegionManager {
 
+    public static IEnumerable<Region> Regions { get { return _regions; } }
+
     private static List<Vector2> _dirtyCells;
     private static Dictionary<Vector2, Region> _regionPositions;
-    private static List<Region> _regions;
+    private static List<Region> _regions = new List<Region>();
 
     private static readonly Color DEBUG_REGION_EDGE_COLOR = new Color(0, 1, 1, 0.3f);
     private static readonly Color DEBUG_SELECTED_REGION_COLOR = new Color(1, 0, 1, 0.6f);
@@ -18,14 +20,18 @@ public static class RegionManager {
     }
     public static void Update()
     {
-        Region.InitializeRegions();
+        Region.CleanDirtyRegions();
         CleanDirtyCells();
+    }
+    public static bool Contains(Region reg)
+    {
+        return _regions.Contains(reg);
     }
     public static void CleanDirtyCells()
     {
         while (_dirtyCells.Count > 0)
         {
-           Create(_dirtyCells[0]);
+           Create(_dirtyCells[0], true);
         }
     }
     public static void SetDirty(Vector2 position)
@@ -36,6 +42,7 @@ public static class RegionManager {
             return;
         
         Region region = _regionPositions[position];
+        RegionConnectionManager.Remove(region);
         _regions.Remove(region);
 
         foreach (Vector2 ownedPos in region.OwnedPositions)
@@ -46,6 +53,14 @@ public static class RegionManager {
     }
     private static void ExecuteFullRegeneration()
     {
+        if(_regions.Count > 0)
+        {
+            for (int i = 0; i < _regions.Count; i++)
+            {
+                RegionConnectionManager.Remove(_regions[i]);
+            }
+        }
+
         _dirtyCells = new List<Vector2>();
         _regionPositions = new Dictionary<Vector2, Region>();
         _regions = new List<Region>();
@@ -61,7 +76,7 @@ public static class RegionManager {
             }
         }
     }
-    private static Region Create(Vector2 position)
+    private static Region Create(Vector2 position, bool informNeighbors = false)
     {
         Region region = new Region(position);
         Queue<Vector2> queue = new Queue<Vector2>();
@@ -115,8 +130,11 @@ public static class RegionManager {
             EG_Debug.DrawSquare(new Rect(DEBUG_DRAWS[(int)i], Vector2.one), color, 10);
         }
 
-
+        region.Initialize();
         _regions.Add(region);
+
+        if(informNeighbors)
+            region.SetDirty(true);
 
         return region;
     }
@@ -174,15 +192,38 @@ public static class RegionManager {
             if (Contains(mousePosInWorld))
             {
                 Region region = GetRegion(mousePosInWorld);
-                
+
+                if (Input.GetKeyDown(KeyCode.LeftAlt))
+                {
+                    List<Region> neighbors = new List<Region>(region.Neighbors);
+
+                    string toReturn = "----" + region.ToString() + "----";
+
+                    for (int i = 0; i < neighbors.Count; i++)
+                    {
+                        toReturn += "\n" + neighbors[i].ToString();
+                    }
+                }                    
+
                 foreach (Vector2 pos in region.OwnedPositions)
                 {
                     EG_Debug.DrawSquare(new Rect(pos, Vector2.one), DEBUG_SELECTED_REGION_COLOR);
                 }
+                
+                if(DebugData.RegionsDrawNeighbors)
+                {
+                    foreach (Region neighbor in region.Neighbors)
+                    {
+                        foreach (Vector2 pos in neighbor.OwnedPositions)
+                        {
+                            EG_Debug.DrawSquare(new Rect(pos, Vector2.one), DEBUG_NEIGHBOR_REGION_COLOR);
+                        }
+                    }
+                }
 
                 if(DebugData.RegionsDrawEdges)
                 {
-                    foreach (Region.RegionConnection connection in region.Connections)
+                    foreach (Region.Connection connection in region.Connections)
                     {
                         Vector2 pos = connection.Position;
                         Vector2 size = new Vector2((connection.Normal.x == 0) ? 1 : connection.Normal.x * connection.Length, (connection.Normal.y == 0) ? 1 : connection.Normal.y * connection.Length);
