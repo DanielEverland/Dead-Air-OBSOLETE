@@ -24,6 +24,7 @@ public class Region
     private static Queue<Region> _regionsToInitialize = new Queue<Region>();
     private static readonly List<Vector2> _directions = new List<Vector2> { Vector2.left, Vector2.right, Vector2.down, Vector2.up };
 
+    public IEnumerable<Entity> Entities { get { return _entities; } }
     public Rect Bounds { get { return _bounds; } }
     public Vector2 Position { get { return Bounds.position; } }
     public int CellCount { get { return _ownedPositions.Count; } }
@@ -43,6 +44,7 @@ public class Region
 
     private readonly Vector2 _anchor;
 
+    private List<Entity> _entities = new List<Entity>();
     private HashSet<Connection> _connections = new HashSet<Connection>();
     private HashSet<Vector2> _ownedPositions = new HashSet<Vector2>();
     private List<Region> _neighbors;
@@ -51,6 +53,14 @@ public class Region
     private bool _isDirty = false;
     private System.Guid _id;
 
+    public void AddEntity(Entity entity)
+    {
+        _entities.Add(entity);
+    }
+    public void RemoveEntity(Entity entity)
+    {
+        _entities.Remove(entity);
+    }
     public void Allocate(Vector2 position)
     {
         Vector2 delta = position - _anchor;
@@ -60,7 +70,13 @@ public class Region
 
         _ownedPositions.Add(position);
     }
-    public bool Contains(Vector2 worldPosition)
+    public bool ContainsCell(Vector2 cellPosition)
+    {
+        cellPosition = cellPosition.ToCellPosition();
+
+        return _ownedPositions.Contains(cellPosition);
+    }
+    public bool ContainsBounds(Vector2 worldPosition)
     {
         Vector2 delta = worldPosition - Position;
 

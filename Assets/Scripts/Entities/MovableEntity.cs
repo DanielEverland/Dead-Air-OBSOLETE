@@ -7,34 +7,36 @@ public abstract class MovableEntity : SeeingEntity {
     [SerializeField]
     private float _speed = 1;
 
-    private Vector2? targetPosition;
+    private Vector2? _targetPosition;
         
     public void SetTargetPosition(Vector2 position)
     {
-        if (targetPosition == position)
+        if (_targetPosition == position)
             return;
 
-        targetPosition = position;
+        _targetPosition = position;
     }
     protected virtual void Update()
     {
-        if(targetPosition.HasValue)
+        if(_targetPosition.HasValue)
             Move();
     }
     private void Move()
     {
-        Vector2 moveDelta = targetPosition.Value - (Vector2)transform.position;
+        Vector2 moveDelta = _targetPosition.Value - (Vector2)transform.position;
         float moveDistance = (_speed * Time.deltaTime);
 
         if(moveDelta.magnitude < moveDistance)
         {
-            transform.position = targetPosition.Value;
+            transform.position = _targetPosition.Value;
 
-            targetPosition = null;
+            _targetPosition = null;
         }
         else
         {
             transform.position += (Vector3)moveDelta.normalized * moveDistance;
-        }        
+        }
+
+        PollRegion();
     }
 }

@@ -14,19 +14,20 @@ public abstract class Entity : MonoBehaviour {
     {
         get
         {
-            return Mathf.Clamp(MaxHealth - healthOffset, 0, float.MaxValue);
+            return Mathf.Clamp(MaxHealth - _healthOffset, 0, float.MaxValue);
         }
         set
         {
-            healthOffset = Mathf.Clamp(MaxHealth - value, 0, MaxHealth);
+            _healthOffset = Mathf.Clamp(MaxHealth - value, 0, MaxHealth);
 
-            if(healthOffset == MaxHealth)
+            if(_healthOffset == MaxHealth)
             {
                 Die();
             }
         }
     }
 
+    public Vector2 CellPosition { get { return transform.position.ToCellPosition(); } }
     public int MaxHealth { get { return (int)_maxHealth; } }
     public byte Priority { get { return (byte)PriorityLevel; } }
     public Rect Rect { get { return new Rect(transform.position - (Vector3)Size / 2, Size); } }
@@ -35,13 +36,18 @@ public abstract class Entity : MonoBehaviour {
 
     protected abstract EntityPriorityLevel PriorityLevel { get; }
 
-    private Dictionary<string, object> data;
-    private float healthOffset;
-    private bool isDead;
+    private Vector2 _oldPosition;
+    private Dictionary<string, object> _data;
+    private float _healthOffset;
+    private bool _isDead;
 
     protected virtual void Awake()
     {
 
+    }
+    public void PollRegion()
+    {
+        RegionEntityManager.Poll(this);
     }
     public static T CreateEntity<T>() where T : Entity
     {
@@ -75,29 +81,29 @@ public abstract class Entity : MonoBehaviour {
     }
     public bool DataExists(string key)
     {
-        return data.ContainsKey(key);
+        return _data.ContainsKey(key);
     }
     public void SetData(string key, object obj)
     {
-        if (data.ContainsKey(key))
+        if (_data.ContainsKey(key))
         {
-            data[key] = obj;
+            _data[key] = obj;
         }
         else
         {
-            data.Add(key, obj);
+            _data.Add(key, obj);
         }
     }
     public object GetData(string key)
     {
-        return data[key];
+        return _data[key];
     }
     private void Die()
     {
-        if (isDead)
+        if (_isDead)
             return;
 
-        isDead = true;
+        _isDead = true;
 
         OnDead();
     }

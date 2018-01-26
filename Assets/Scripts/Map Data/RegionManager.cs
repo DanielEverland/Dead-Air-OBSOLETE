@@ -13,6 +13,7 @@ public static class RegionManager {
     private static readonly Color DEBUG_REGION_EDGE_COLOR = new Color(0, 1, 1, 0.3f);
     private static readonly Color DEBUG_SELECTED_REGION_COLOR = new Color(1, 0, 1, 0.6f);
     private static readonly Color DEBUG_NEIGHBOR_REGION_COLOR = new Color(1, 1, 1, 0.6f);
+    private static readonly Color DEBUG_REGION_ENTITY_COLOR = new Color(1, 1, 0, 1);
 
     public static bool Initialize()
     {
@@ -207,6 +208,14 @@ public static class RegionManager {
                 foreach (Vector2 pos in region.OwnedPositions)
                 {
                     EG_Debug.DrawSquare(new Rect(pos, Vector2.one), DEBUG_SELECTED_REGION_COLOR);
+                }
+
+                if(DebugData.RegionsDrawEntities)
+                {
+                    foreach (Entity entity in region.Entities)
+                    {
+                        EG_Debug.DrawRect(entity.Rect, DEBUG_REGION_ENTITY_COLOR);
+                    }
                 }
                 
                 if(DebugData.RegionsDrawNeighbors)

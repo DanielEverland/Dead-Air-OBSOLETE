@@ -42,5 +42,8 @@
 
     [EG_Debug.Toggle("Data Structures", "Draw Neighbors", true, Header = "Regions")]
     public static bool RegionsDrawNeighbors { get; set; }
+
+    [EG_Debug.Toggle("Data Structures", "Draw Entities", true, Header = "Regions")]
+    public static bool RegionsDrawEntities { get; set; }
     #endregion
 }
