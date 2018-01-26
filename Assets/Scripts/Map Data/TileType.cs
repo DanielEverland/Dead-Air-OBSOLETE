@@ -17,7 +17,7 @@ public class TileType : ScriptableObject {
     }
     private static List<TileType> allTileTypes;
 
-    public static void LoadAllTileTypes()
+    public static bool LoadAllTileTypes()
     {
         allTileTypes = new List<TileType>(Resources.LoadAll<TileType>("Tile Types"));
 
@@ -25,6 +25,8 @@ public class TileType : ScriptableObject {
         {
             allTileTypes[i].ID = i;
         }
+
+        return true;
     }
     
     public bool IsPassable { get { return _isPassable; } set { _isPassable = value; } }

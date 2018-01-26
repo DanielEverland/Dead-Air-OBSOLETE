@@ -6,20 +6,18 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MapDataManager : MonoBehaviour {
-
-    public static bool HasLoadedMap { get { return CurrentlyLoadedMap != null; } }
+    
     public static MapData CurrentlyLoadedMap { get { return currentlyLoadedMap; } }
 
     private static MapData currentlyLoadedMap;
        
-    public static void Initialize()
+    public static bool Initialize()
     {
-        if (HasLoadedMap)
-            return;
-
         currentlyLoadedMap = new MapData();
 
         LoadMap();
+
+        return true;
     }
     public static void LoadMap()
     {

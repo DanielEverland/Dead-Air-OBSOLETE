@@ -10,10 +10,12 @@ public static class DebugManager {
    
     private static List<AttributeEntry> _attributes;
 
-	public static void Initialize()
+	public static bool Initialize()
     {
         LoadDebugSettings();
         CreateDebugMenu();
+
+        return true;
     }
     private static void CreateDebugMenu()
     {

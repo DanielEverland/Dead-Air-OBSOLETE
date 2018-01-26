@@ -14,9 +14,11 @@ public static class RegionManager {
     private static readonly Color DEBUG_SELECTED_REGION_COLOR = new Color(1, 0, 1, 0.6f);
     private static readonly Color DEBUG_NEIGHBOR_REGION_COLOR = new Color(1, 1, 1, 0.6f);
 
-    public static void Initialize()
+    public static bool Initialize()
     {
         ExecuteFullRegeneration();
+
+        return true;
     }
     public static void Update()
     {

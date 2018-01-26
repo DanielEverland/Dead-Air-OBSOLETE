@@ -26,9 +26,11 @@ public class ChunkGenerator {
     }
     private static Vector3[] normals;
 
-    public static void Initialize()
+    public static bool Initialize()
     {
         CreateNormals();
+
+        return true;
     }
 	public static void RenderChunk(Chunk chunk)
     {

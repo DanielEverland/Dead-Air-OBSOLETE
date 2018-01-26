@@ -7,29 +7,16 @@ using UnityEngine;
 public class Game : MonoBehaviour {
 
     public static Player Player { get { return Player.Instance; } }
+    public static bool HasLoaded { get { return LoadManager.HasLoaded; } }
     
-    private static List<Action> LoadFlow = new List<Action>()
-    {
-        //Data Initialization
-        EG_Debug.Initialize,
-        TileType.LoadAllTileTypes,
-
-        //Map Generation
-        ChunkGenerator.Initialize,
-        MapDataManager.Initialize,
-        RegionManager.Initialize,
-
-        //Scene Initialization
-        PlayerCamera.Center,
-        DebugManager.Initialize,
-    };
-    
-    private void Start()
-    {
-        InitializeGame();
-    }
     private void Update()
     {
+        if(!HasLoaded)
+        {
+            LoadManager.Update();
+            return;
+        }
+
         MapData.Update();
         VisionManager.Update();
         DebugMenu.GlobalUpdate();
@@ -41,13 +28,6 @@ public class Game : MonoBehaviour {
             MapData.SetWallTile(Camera.main.ScreenToWorldPoint(Input.mousePosition), WallType.AllTypes[0].ID);
         }
         #endregion
-    }
-    private static void InitializeGame()
-    {
-        for (int i = 0; i < LoadFlow.Count; i++)
-        {
-            LoadFlow[i].Invoke();
-        }
     }
     public static Entity CreateEntity<T>() where T : Entity
     {

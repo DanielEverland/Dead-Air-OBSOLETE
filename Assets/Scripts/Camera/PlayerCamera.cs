@@ -41,6 +41,12 @@ public class PlayerCamera : MonoBehaviour {
 
         camera.aspect = ratio;
     }
+    public static bool Initialize()
+    {
+        Center();
+
+        return true;
+    }
     public static void Center()
     {
         IEnumerable<Entity> colonists = MapData.Entities.Where(x => x.GetType() == typeof(Colonist));

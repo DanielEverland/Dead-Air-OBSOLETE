@@ -6,10 +6,12 @@ public static partial class EG_Debug {
 
     private static EG_DebugGizmos gizmosInstance;
 
-    public static void Initialize()
+    public static bool Initialize()
     {
         GameObject gizmoObject = new GameObject("EG_Debug Gizmos");
         gizmosInstance = gizmoObject.AddComponent<EG_DebugGizmos>();
+
+        return true;
     }
 
     public static void DrawCircle(Vector2 center, float radius)
