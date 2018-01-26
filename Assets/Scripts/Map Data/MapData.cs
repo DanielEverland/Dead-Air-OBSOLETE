@@ -37,7 +37,7 @@ public class MapData {
     /// <summary>
     /// How many tiles wide and high should the map be?
     /// </summary>
-    public const int MAPSIZE = 64;
+    public const int MAPSIZE = 256;
 
     /// <summary>
     /// Minimum amount of colonists to spawn in new map

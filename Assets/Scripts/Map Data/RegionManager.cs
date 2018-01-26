@@ -8,7 +8,7 @@ public static class RegionManager {
 
     private static List<Vector2> _dirtyCells;
     private static Dictionary<Vector2, Region> _regionPositions;
-    private static List<Region> _regions = new List<Region>();
+    private static HashSet<Region> _regions = new HashSet<Region>();
 
     private static readonly Color DEBUG_REGION_EDGE_COLOR = new Color(0, 1, 1, 0.3f);
     private static readonly Color DEBUG_SELECTED_REGION_COLOR = new Color(1, 0, 1, 0.6f);
@@ -55,17 +55,14 @@ public static class RegionManager {
     }
     private static void ExecuteFullRegeneration()
     {
-        if(_regions.Count > 0)
+        foreach (Region region in _regions)
         {
-            for (int i = 0; i < _regions.Count; i++)
-            {
-                RegionConnectionManager.Remove(_regions[i]);
-            }
+            RegionConnectionManager.Remove(region);
         }
 
         _dirtyCells = new List<Vector2>();
         _regionPositions = new Dictionary<Vector2, Region>();
-        _regions = new List<Region>();
+        _regions = new HashSet<Region>();
 
         for (int x = 0; x < MapData.MAPSIZE; x++)
         {

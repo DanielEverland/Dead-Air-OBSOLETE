@@ -44,7 +44,7 @@ public class Region
     private readonly Vector2 _anchor;
 
     private HashSet<Connection> _connections = new HashSet<Connection>();
-    private List<Vector2> _ownedPositions = new List<Vector2>();
+    private HashSet<Vector2> _ownedPositions = new HashSet<Vector2>();
     private List<Region> _neighbors;
     private HashSet<Vector2> blackList;
     private Rect _bounds;
@@ -114,13 +114,8 @@ public class Region
         _connections = new HashSet<Connection>();
         blackList = new HashSet<Vector2>();
 
-        List<Vector2> positionsToCheck = new List<Vector2>(_ownedPositions);
-
-        while (positionsToCheck.Count > 0)
+        foreach (Vector2 position in _ownedPositions)
         {
-            Vector2 position = positionsToCheck[0];
-            positionsToCheck.RemoveAt(0);
-
             for (int i = 0; i < _directions.Count; i++)
             {
                 if (!_ownedPositions.Contains(position + _directions[i]) && IsValid(position + _directions[i]))
