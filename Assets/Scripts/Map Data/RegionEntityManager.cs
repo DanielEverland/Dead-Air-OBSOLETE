@@ -19,6 +19,7 @@ public static class RegionEntityManager {
         if (region == null)
             throw new System.NullReferenceException("Cannot find region for entity");
 
+        entity.SetRegion(region);
         region.AddEntity(entity);
         _entityRegionLookup.Add(entity, region);
     }
@@ -37,6 +38,7 @@ public static class RegionEntityManager {
         
         if(!region.ContainsCell(entity.CellPosition))
         {
+            entity.SetRegion(null);
             region.RemoveEntity(entity);
             _entityRegionLookup.Remove(entity);
 
@@ -49,6 +51,7 @@ public static class RegionEntityManager {
         {
             Region region = _entityRegionLookup[entity];
 
+            entity.SetRegion(null);
             region.RemoveEntity(entity);
             _entityRegionLookup.Remove(entity);
         }

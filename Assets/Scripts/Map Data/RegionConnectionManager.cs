@@ -33,14 +33,14 @@ public static class RegionConnectionManager {
     public static IEnumerable<Region> GetRegions(Region.Connection connection)
     {
         if (!_connections.ContainsKey(connection))
-            return default(IEnumerable<Region>);
+            return new List<Region>();
 
         return _connections[connection];
     }
     public static IEnumerable<Region> GetRegions(int hash)
     {
         if (!_connections.ContainsKey(hash))
-            return default(IEnumerable<Region>);
+            return new List<Region>();
 
         return _connections[hash];
     }

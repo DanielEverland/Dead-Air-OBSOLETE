@@ -31,16 +31,16 @@
     [EG_Debug.Toggle("Data Structures", "Draw All Region Bounds", true, Header = "Regions")]
     public static bool RegionsDrawAllBounds { get; set; }
 
-    [EG_Debug.Toggle("Data Structures", "Draw Selected Region", false, Header = "Regions")]
+    [EG_Debug.Toggle("Data Structures", "Draw Selected Region", true, Header = "Regions")]
     public static bool RegionsDrawSelected { get; set; }
 
-    [EG_Debug.Toggle("Data Structures", "Draw Selected Regions Edges", false, Header = "Regions")]
+    [EG_Debug.Toggle("Data Structures", "Draw Selected Regions Edges", true, Header = "Regions")]
     public static bool RegionsDrawEdges { get; set; }
 
     [EG_Debug.Toggle("Data Structures", "Draw Region Flood Fill", false, Header = "Regions")]
     public static bool RegionsFloodFillDebug { get; set; }
 
-    [EG_Debug.Toggle("Data Structures", "Draw Neighbors", false, Header = "Regions")]
+    [EG_Debug.Toggle("Data Structures", "Draw Neighbors", true, Header = "Regions")]
     public static bool RegionsDrawNeighbors { get; set; }
 
     [EG_Debug.Toggle("Data Structures", "Draw Entities", false, Header = "Regions")]

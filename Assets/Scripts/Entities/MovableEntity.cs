@@ -16,8 +16,10 @@ public abstract class MovableEntity : SeeingEntity {
 
         _targetPosition = position;
     }
-    protected virtual void Update()
+    protected override void Update()
     {
+        base.Update();
+
         if(_targetPosition.HasValue)
             Move();
     }

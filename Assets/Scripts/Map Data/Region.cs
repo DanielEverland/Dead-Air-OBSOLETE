@@ -35,7 +35,7 @@ public class Region
     {
         get
         {
-            if (_neighbors == null)
+            //if (_neighbors == null)
                 CacheNeighbors();
 
             return _neighbors;
@@ -114,7 +114,7 @@ public class Region
     private void CacheNeighbors()
     {
         _neighbors = new List<Region>();
-
+        
         foreach (int connection in _connections)
         {
             foreach (Region region in RegionConnectionManager.GetRegions(connection))

@@ -20,6 +20,13 @@ public class Chunk {
             for (int y = 0; y < CHUNK_SIZE; y++)
             {
                 terrainTiles[x, y] = validTileTypes[Mathf.RoundToInt((validTileTypes.Count - 1) * GetPerlinValue(x, y))].ID;
+
+                #region DEBUG REMVOE ME
+                float poll = Random.Range(0f, 1f);
+
+                if (poll > 0.8f)
+                    SetWallTile(WallType.AllTypes[0], new Vector2(x, y));
+                #endregion
             }
         }
     }

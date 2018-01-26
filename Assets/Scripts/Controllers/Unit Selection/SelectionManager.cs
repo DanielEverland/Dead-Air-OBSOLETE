@@ -108,7 +108,8 @@ public class SelectionManager : MonoBehaviour {
 
         for (int i = 0; i < unitsToMove.Count; i++)
         {
-            unitsToMove[i].AssignWork(new MovePointWork(unitPositions.Dequeue()));
+            Pathfinder.MoveTo(unitsToMove[i], Camera.main.ScreenToWorldPoint(Input.mousePosition).ToCellPosition());
+            //unitsToMove[i].AssignWork(new MovePointWork(unitPositions.Dequeue()));
         }
     }
     private void RenderUI(Rect rect)

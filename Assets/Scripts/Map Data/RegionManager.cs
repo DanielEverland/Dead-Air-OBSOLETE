@@ -5,7 +5,7 @@ using UnityEngine;
 public static class RegionManager {
 
     public static IEnumerable<Region> Regions { get { return _regions; } }
-
+    
     private static List<Vector2> _dirtyCells;
     private static Dictionary<Vector2, Region> _regionPositions;
     private static HashSet<Region> _regions = new HashSet<Region>();
@@ -26,7 +26,11 @@ public static class RegionManager {
         Region.CleanDirtyRegions();
         CleanDirtyCells();
     }
-    public static bool Contains(Region reg)
+    public static bool ContainsCell(Vector2 cellPosition)
+    {
+        return _regionPositions.ContainsKey(cellPosition.ToCellPosition());
+    }
+    public static bool ContainsRegion(Region reg)
     {
         return _regions.Contains(reg);
     }
@@ -127,7 +131,7 @@ public static class RegionManager {
 
             Color color = new Color(0, 0, percentage);
 
-            EG_Debug.DrawSquare(new Rect(DEBUG_DRAWS[(int)i], Vector2.one), color, 10);
+            EG_Debug.DrawSquare(new Rect(DEBUG_DRAWS[(int)i], Vector2.one), color, 2);
         }
 
         region.Initialize();
@@ -202,7 +206,11 @@ public static class RegionManager {
                     for (int i = 0; i < neighbors.Count; i++)
                     {
                         toReturn += "\n" + neighbors[i].ToString();
+
+                        EG_Debug.DrawSquare(neighbors[i].Bounds, Color.cyan, 0.1f);
                     }
+
+                    Debug.Log(toReturn);
                 }                    
 
                 foreach (Vector2 pos in region.OwnedPositions)

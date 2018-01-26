@@ -27,6 +27,7 @@ public abstract class Entity : MonoBehaviour {
         }
     }
 
+    public Region Region { get { return _region; } }
     public Vector2 CellPosition { get { return transform.position.ToCellPosition(); } }
     public int MaxHealth { get { return (int)_maxHealth; } }
     public byte Priority { get { return (byte)PriorityLevel; } }
@@ -40,10 +41,22 @@ public abstract class Entity : MonoBehaviour {
     private Dictionary<string, object> _data;
     private float _healthOffset;
     private bool _isDead;
+    private Region _region;
 
     protected virtual void Awake()
     {
 
+    }
+    protected virtual void Update()
+    {
+        if (Game.HasLoaded && Region == null)
+            PollRegion();
+    }
+    public void SetRegion(Region region)
+    {
+        _region = region;
+
+        Debug.Log("Set region");
     }
     public void PollRegion()
     {
