@@ -210,9 +210,7 @@ public class MapData {
     private void CreateEntities()
     {
         _entities = new List<Entity>();
-
-
-        return;
+        
         CreateColonists();
         CreateZombies();
     }
