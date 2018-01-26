@@ -24,6 +24,8 @@ public static class LoadManager {
         new LoadEntry(){ function = DebugManager.Initialize, loadText = "Loading Developer Options" },
     };
 
+    private static Stopwatch _globalStopwatch;
+    private static Stopwatch _localStopwatch;
     private static LoadingScreen _loadingScreen;
     private static bool _hasInitialized = false;
     private static bool _hasLoaded = false;
@@ -66,15 +68,28 @@ public static class LoadManager {
 
         _loadingScreen.SetProgress((float)_loadStep / (float)_loadFlow.Count);
         _loadingScreen.SetText(current.loadText);
+
+        _localStopwatch = new Stopwatch();
+        _localStopwatch.Start();
     }
     private static void Execute()
     {
         LoadEntry current = _loadFlow[_loadStep];
 
         current.hasLoaded = current.function.Invoke();
+
+        if(current.hasLoaded)
+        {
+            _localStopwatch.Stop();
+
+            UnityEngine.Debug.Log(current.loadText + " took " + _localStopwatch.Elapsed);
+        }
     }
     private static void Initialize()
     {
+        _globalStopwatch = new Stopwatch();
+        _globalStopwatch.Start();
+
         _loadingScreen = PrefabPool.GetObject<LoadingScreen>("LoadingScreen");
 
         Next();
@@ -85,6 +100,8 @@ public static class LoadManager {
     {
         _hasLoaded = true;
         GameObject.Destroy(_loadingScreen.gameObject);
+
+        UnityEngine.Debug.Log("--------LOAD FLOW FINISHED--------" + "\nTook " + _globalStopwatch.Elapsed);
     }
     private class LoadEntry
     {
