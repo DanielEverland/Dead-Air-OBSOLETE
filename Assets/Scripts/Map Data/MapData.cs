@@ -37,17 +37,17 @@ public class MapData {
     /// <summary>
     /// How many tiles wide and high should the map be?
     /// </summary>
-    public const int MAPSIZE = 256;
+    public const int MAPSIZE = 64;
 
     /// <summary>
     /// Minimum amount of colonists to spawn in new map
     /// </summary>
-    private const int COLONIST_AMOUNT_MIN = 4;
+    private const int COLONIST_AMOUNT_MIN = 1;
 
     /// <summary>
     /// Maximum amount of colonists to spawn in new map
     /// </summary>
-    private const int COLONIST_AMOUNT_MAX = 10;
+    private const int COLONIST_AMOUNT_MAX = 1;
 
     /// <summary>
     /// Minimum amount of zombies per horde
@@ -212,6 +212,8 @@ public class MapData {
         _entities = new List<Entity>();
         
         CreateColonists();
+
+        return;
         CreateZombies();
     }
     private void CreateZombies()

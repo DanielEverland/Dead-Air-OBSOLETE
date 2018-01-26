@@ -23,6 +23,6 @@ public class Colonist : WorkableEntity {
     }
     private void Wander()
     {
-        AssignWork(new WanderWork(transform.position));
+        //AssignWork(new WanderWork(transform.position));
     }
 }

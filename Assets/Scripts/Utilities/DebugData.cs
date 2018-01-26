@@ -28,7 +28,7 @@
     #endregion
 
     #region Regions
-    [EG_Debug.Toggle("Data Structures", "Draw All Region Bounds", false, Header = "Regions")]
+    [EG_Debug.Toggle("Data Structures", "Draw All Region Bounds", true, Header = "Regions")]
     public static bool RegionsDrawAllBounds { get; set; }
 
     [EG_Debug.Toggle("Data Structures", "Draw Selected Region", false, Header = "Regions")]
@@ -45,5 +45,19 @@
 
     [EG_Debug.Toggle("Data Structures", "Draw Entities", false, Header = "Regions")]
     public static bool RegionsDrawEntities { get; set; }
+    #endregion
+
+    #region Pathfinding
+    [EG_Debug.Toggle("Pathfinding", "Draw Regional Paths", true)]
+    public static bool PathfindingDrawRegionalPaths { get; set; }
+
+    [EG_Debug.Toggle("Pathfinding", "Draw Flood Fill", true)]
+    public static bool PathfindingDrawFloodFills { get; set; }
+
+    [EG_Debug.Toggle("Pathfinding", "Draw Vector Field", true)]
+    public static bool PathfindingDrawVectorField { get; set; }
+
+    [EG_Debug.Toggle("Pathfinding", "Draw Connections", true)]
+    public static bool PathfindingDrawConnections { get; set; }
     #endregion
 }
