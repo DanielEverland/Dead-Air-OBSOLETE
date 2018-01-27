@@ -29,9 +29,9 @@ public class EG_GL : MonoBehaviour
     {
         _toDraw.AddLast(new TextObject(text, color, duration));
     }
-    public static void DrawCircle(Vector2 center, float radius, Color color, float duration)
+    public static void DrawCircle(Vector2 center, float radius, Color color, float duration, bool isFilled)
     {
-        _toDraw.AddLast(new CircleObject(center, radius, color, duration));
+        _toDraw.AddLast(new CircleObject(center, radius, isFilled, color, duration));
     }
     public static void DrawRect(Rect rect, Color color, float duration, bool isFilled)
     {
@@ -123,13 +123,34 @@ public class EG_GL : MonoBehaviour
             GL.End();
         }
     }
-    private class CircleObject : DrawCall
+    private abstract class FillObject : DrawCall
     {
-        public CircleObject(Vector2 center, float radius, Color color, float duration) : base(duration, color)
+        public FillObject(bool isFilled, float duration, Color color) : base(duration, color)
+        {
+            _isFilled = isFilled;
+        }
+
+        private readonly bool _isFilled;
+
+        protected override void DoDraw()
+        {
+            if (_isFilled)
+                DrawFilled();
+            else
+                DrawOutline();
+        }
+
+        protected abstract void DrawFilled();
+        protected abstract void DrawOutline();
+    }
+    private class CircleObject : FillObject
+    {
+        public CircleObject(Vector2 center, float radius, bool isFilled, Color color, float duration) : base(isFilled, duration, color)
         {
             int vertexCount = Mathf.RoundToInt(radius * VERTEX_COUNT_MULTIPLIER) + VERTEX_COUNT_ADDITIVE;
 
             _vertices = new List<Vector2>();
+            _center = center;
 
             for (int i = 0; i < vertexCount; i++)
             {
@@ -143,8 +164,24 @@ public class EG_GL : MonoBehaviour
         private const int VERTEX_COUNT_ADDITIVE = 15;
         
         private readonly List<Vector2> _vertices;
+        private readonly Vector2 _center;
 
-        protected override void DoDraw()
+        protected override void DrawFilled()
+        {
+            GL.Begin(GL.TRIANGLES);
+            GL.Color(_color);
+
+            for (int i = 0; i < _vertices.Count; i++)
+            {
+                GL.Vertex(_center);
+
+                GL.Vertex(_vertices[i]);
+                GL.Vertex(_vertices[i == 0 ? _vertices.Count - 1 : i - 1]);
+            }
+
+            GL.End();
+        }
+        protected override void DrawOutline()
         {
             GL.Begin(GL.LINES);
             GL.Color(_color);
@@ -158,25 +195,16 @@ public class EG_GL : MonoBehaviour
             GL.End();
         }
     }
-    private class RectObject : DrawCall
+    private class RectObject : FillObject
     {
-        public RectObject(Rect rect, bool isFilled, Color color, float duration) : base(duration, color)
+        public RectObject(Rect rect, bool isFilled, Color color, float duration) : base(isFilled, duration, color)
         {
             _rect = rect;
-            _isFilled = isFilled;
         }
 
         private Rect _rect;
-        private bool _isFilled;
-
-        protected override void DoDraw()
-        {
-            if (_isFilled)
-                DrawFilled();
-            else
-                DrawOutline();
-        }
-        private void DrawFilled()
+        
+        protected override void DrawFilled()
         {
             GL.Begin(GL.QUADS);
             GL.Color(_color);
@@ -188,7 +216,7 @@ public class EG_GL : MonoBehaviour
 
             GL.End();
         }
-        private void DrawOutline()
+        protected override void DrawOutline()
         {
             GL.Begin(GL.LINES);
             GL.Color(_color);

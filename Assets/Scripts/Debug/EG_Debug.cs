@@ -17,6 +17,18 @@ public static partial class EG_Debug {
     {
         EG_GL.DrawText(text, color, duration);
     }
+    public static void DrawSphere(Vector2 center, float radius)
+    {
+        DrawSphere(center, radius, Color.white);
+    }
+    public static void DrawSphere(Vector2 center, float radius, Color color)
+    {
+        DrawSphere(center, radius, color, 0);
+    }
+    public static void DrawSphere(Vector2 center, float radius, Color color, float duration)
+    {
+        EG_GL.DrawCircle(center, radius, color, duration, true);
+    }
     public static void DrawCircle(Vector2 center, float radius)
     {
         DrawCircle(center, radius, Color.white);
@@ -27,7 +39,7 @@ public static partial class EG_Debug {
     }
     public static void DrawCircle(Vector2 center, float radius, Color color, float duration)
     {
-        EG_GL.DrawCircle(center, radius, color, duration);
+        EG_GL.DrawCircle(center, radius, color, duration, false);
     }
     public static void DrawSquare(Vector2 center, Vector2 size)
     {
