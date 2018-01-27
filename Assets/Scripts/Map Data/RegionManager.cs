@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -197,21 +198,12 @@ public static class RegionManager {
             {
                 Region region = GetRegion(mousePosInWorld);
 
-                if (Input.GetKeyDown(KeyCode.LeftAlt))
+                EG_Debug.DrawText("----------SELECTED REGION----------\n" + region);
+
+                foreach (int connection in region.Connections)
                 {
-                    List<Region> neighbors = new List<Region>(region.Neighbors);
-
-                    string toReturn = "----" + region.ToString() + "----";
-
-                    for (int i = 0; i < neighbors.Count; i++)
-                    {
-                        toReturn += "\n" + neighbors[i].ToString();
-
-                        EG_Debug.DrawSquare(neighbors[i].Bounds, Color.cyan, 0.1f);
-                    }
-
-                    Debug.Log(toReturn);
-                }                    
+                    EG_Debug.DrawText(connection + ": " + RegionConnectionManager.GetRegions(connection).Count());
+                }
 
                 foreach (Vector2 pos in region.OwnedPositions)
                 {
