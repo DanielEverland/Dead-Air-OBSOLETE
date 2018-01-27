@@ -67,6 +67,30 @@ public class EG_GL : MonoBehaviour
         }
         protected abstract void DoDraw();
     }
+    private class LineObject : DrawCall
+    {
+        public LineObject(Vector2 a, Vector2 b, Color color, float duration) : base(duration)
+        {
+            _a = a;
+            _b = b;
+            _color = color;
+        }
+
+        private readonly Vector2 _a;
+        private readonly Vector2 _b;
+        private readonly Color _color;
+
+        protected override void DoDraw()
+        {
+            GL.Begin(GL.LINES);
+            GL.Color(_color);
+
+            GL.Vertex(_a);
+            GL.Vertex(_b);
+
+            GL.End();
+        }
+    }
     private class CircleObject : DrawCall
     {
         public CircleObject(Vector2 center, float radius, Color color, float duration) : base(duration)
