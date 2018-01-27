@@ -1,9 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public static partial class EG_Debug {
-    
+
+    public static void DrawText(string text)
+    {
+        DrawText(text, Color.white);
+    }
+    public static void DrawText(string text, Color color)
+    {
+        DrawText(text, color, 0);
+    }
+    public static void DrawText(string text, Color color, float duration)
+    {
+        EG_GL.DrawText(text, color, duration);
+    }
     public static void DrawCircle(Vector2 center, float radius)
     {
         DrawCircle(center, radius, Color.white);

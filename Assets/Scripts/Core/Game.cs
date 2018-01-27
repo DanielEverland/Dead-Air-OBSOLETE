@@ -16,7 +16,7 @@ public class Game : MonoBehaviour {
             LoadManager.Update();
             return;
         }
-
+        
         MapData.Update();
         VisionManager.Update();
         DebugMenu.GlobalUpdate();
