@@ -17,6 +17,10 @@ public class EG_GL : MonoBehaviour
         
         glCamera = GetComponent<Camera>();
     }
+    public static void DrawCircle(Vector2 center, float radius, Color color, float duration)
+    {
+        _toDraw.AddLast(new CircleObject(center, radius, color, duration));
+    }
     public static void DrawRect(Rect rect, Color color, float duration, bool isFilled)
     {
         _toDraw.AddLast(new RectObject(rect, color, isFilled, duration));
@@ -62,6 +66,44 @@ public class EG_GL : MonoBehaviour
                 _drawQueue.AddLast(this);
         }
         protected abstract void DoDraw();
+    }
+    private class CircleObject : DrawCall
+    {
+        public CircleObject(Vector2 center, float radius, Color color, float duration) : base(duration)
+        {
+            _color = color;
+
+            int vertexCount = Mathf.RoundToInt(radius * VERTEX_COUNT_MULTIPLIER) + VERTEX_COUNT_ADDITIVE;
+
+            _vertices = new List<Vector2>();
+
+            for (int i = 0; i < vertexCount; i++)
+            {
+                _vertices.Add(new Vector2(
+                    radius * Mathf.Cos(2 * Mathf.PI * i / vertexCount) + center.x,
+                    radius * Mathf.Sin(2 * Mathf.PI * i / vertexCount) + center.y));
+            }
+        }
+
+        private const float VERTEX_COUNT_MULTIPLIER = 1.5f;
+        private const int VERTEX_COUNT_ADDITIVE = 15;
+        
+        private readonly List<Vector2> _vertices;
+        private readonly Color _color;
+
+        protected override void DoDraw()
+        {
+            GL.Begin(GL.LINES);
+            GL.Color(_color);
+
+            for (int i = 0; i < _vertices.Count; i++)
+            {
+                GL.Vertex(_vertices[i]);
+                GL.Vertex(_vertices[i == 0 ? _vertices.Count - 1 : i - 1]);
+            }
+
+            GL.End();
+        }
     }
     private class RectObject : DrawCall
     {

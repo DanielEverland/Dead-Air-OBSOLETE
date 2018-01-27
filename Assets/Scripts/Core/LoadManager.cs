@@ -11,7 +11,6 @@ public static class LoadManager {
     private static readonly List<LoadEntry> _loadFlow = new List<LoadEntry>()
     {
         //Data Initialization
-        new LoadEntry(){ function = EG_Debug.Initialize, loadText = "Initializing Debug Functions" },
         new LoadEntry(){ function = TileType.LoadAllTileTypes, loadText = "Loading Tiletypes" },
 
         //Map Generation

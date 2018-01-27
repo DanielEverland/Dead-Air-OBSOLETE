@@ -64,6 +64,7 @@ public class PlayerCamera : MonoBehaviour {
             y = cumulativePosition.y / colonists.Count(),
         };
     }
+    float radius;
     private void PollInput()
     {
         mouseDelta = oldMousePosition - Input.mousePosition;
@@ -72,7 +73,7 @@ public class PlayerCamera : MonoBehaviour {
         isScrollWheelDown = Input.GetKey(KeyCode.Mouse2);
         isShiftDown = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
         scrollWheelDelta = Input.GetAxis("Mouse ScrollWheel");
-
+        
         if (Input.GetKeyDown(KeyCode.Mouse2))
         {
             scrollWheelDownWorldPos = MouseToWorldPoint();
