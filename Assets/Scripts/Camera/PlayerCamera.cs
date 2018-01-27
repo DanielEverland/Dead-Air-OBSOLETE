@@ -64,7 +64,6 @@ public class PlayerCamera : MonoBehaviour {
             y = cumulativePosition.y / colonists.Count(),
         };
     }
-    float radius;
     private void PollInput()
     {
         mouseDelta = oldMousePosition - Input.mousePosition;
