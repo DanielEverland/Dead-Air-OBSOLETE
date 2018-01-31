@@ -6,7 +6,7 @@ public class ActionManager : MonoBehaviour {
 
     private static ActionManager _instance;
 
-    private List<Callback> _callbacks = new List<Callback>();
+    private LinkedList<Callback> _callbacks = new LinkedList<Callback>();
 
     private void Awake()
     {
@@ -14,20 +14,26 @@ public class ActionManager : MonoBehaviour {
     }
     private void Update()
     {
-        foreach (Callback callback in new List<Callback>(_callbacks))
+        LinkedListNode<Callback> node = _callbacks.First;
+
+        while (node != null)
         {
-            callback.Poll();
+            LinkedListNode<Callback> next = node.Next;
+
+            node.Value.Poll();
+
+            node = next;
         }
     }
     public static void DelayedCallback(float delay, System.Action callback)
     {
-        _instance._callbacks.Add(new Callback(delay, callback));
+        _instance._callbacks.AddLast(new Callback(delay, callback));
     }
     public static void DelayedCallback<T>(float delay, System.Action callback, System.Func<T, bool> condition, T conditionObject)
     {
-        _instance._callbacks.Add(new ConditionedCallback<T>(delay, callback, condition, conditionObject));
+        _instance._callbacks.AddLast(new ConditionedCallback<T>(delay, callback, condition, conditionObject));
     }
-    public static void RaiseCallback(Callback callback)
+    private static void RaiseCallback(Callback callback)
     {
         _instance._callbacks.Remove(callback);
 
@@ -72,7 +78,7 @@ public class ActionManager : MonoBehaviour {
 
             if(remainingTime <= 0)
             {
-                ActionManager.RaiseCallback(this);
+                RaiseCallback(this);
             }
         }
         public virtual void Raise()
